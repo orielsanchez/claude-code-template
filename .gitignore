@@ -1,0 +1,57 @@
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.production
+.env.test
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies (language-specific directories will be added by projects)
+node_modules/
+vendor/
+venv/
+.venv/
+
+# Build outputs (language-specific files will be added by projects) 
+dist/
+build/
+target/
+out/
+
+# Package files
+*.tgz
+*.tar.gz
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Testing
+coverage/
+.coverage
+.pytest_cache/
+
+# Temporary files
+*.tmp
+*.temp

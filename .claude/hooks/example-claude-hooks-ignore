@@ -1,0 +1,83 @@
+# Example .claude-hooks-ignore file
+# Copy this to your project root as .claude-hooks-ignore to exclude files
+# from Claude hooks checking.
+#
+# Format: Shell glob patterns, one per line
+# Comments start with #
+# Empty lines are ignored
+
+# Vendor directories
+vendor/**
+node_modules/**
+.git/**
+
+# Generated files
+*.pb.go
+*_gen.go
+*_generated.go
+*.generated.ts
+dist/**
+build/**
+out/**
+
+# Third-party code
+third_party/**
+external/**
+
+# Test fixtures that might contain unusual patterns
+testdata/**
+fixtures/**
+**/testdata/**
+
+# Documentation that might have code examples
+docs/**/*.go
+examples/**
+
+# Specific files
+.golangci.yml  # Has example configs that might trigger checks
+TODO.md        # Might have many TODO items
+
+# IDE and editor files
+.idea/**
+.vscode/**
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/**
+temp/**
+*.tmp
+*.temp
+
+# Archives
+*.zip
+*.tar.gz
+*.tgz
+
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Images and media
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.mp4
+*.mp3
+
+# Specific patterns for Go projects
+# Files containing panic handlers (allowed to use panic)
+*panic*.go
+*recover*.go
+
+# Main files (allowed to use time.Sleep for graceful shutdown)
+cmd/**/main.go
