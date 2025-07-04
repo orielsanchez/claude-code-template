@@ -1,22 +1,23 @@
 ---
 allowed-tools: all
-description: Context handoff prompts and interactive help system
+description: Context handoff prompts for seamless LLM transitions
 ---
 
-# Context & Help System
+# Context Handoff System
 
-Context handoff for LLM transitions and interactive help for commands/workflows.
+Generate comprehensive handoff prompts for seamless LLM transitions and continuity.
 
 **Usage:**
 - `/prompt` - Generate comprehensive handoff prompt (default)
-- `/prompt [focus_area]` - Generate focused handoff prompt  
-- `/prompt help [command|topic]` - Get help on commands/workflows
+- `/prompt [focus_area]` - Generate focused handoff prompt for specific domain
 
 **Examples:**
 - `/prompt` - Complete context handoff for LLM continuation
 - `/prompt debugging` - Generate debugging-focused context handoff
-- `/prompt help tdd` - Get detailed help on TDD workflow
-- `/prompt help workflow` - Show development workflow guidance
+- `/prompt architecture` - Generate architecture-focused context handoff
+- `/prompt testing` - Generate testing-focused context handoff
+
+**For help and guidance, use `/help` instead.**
 
 ## Context Handoff (Default: `/prompt`)
 
@@ -43,34 +44,15 @@ Context handoff for LLM transitions and interactive help for commands/workflows.
 - Ready to paste into fresh LLM session
 - Includes enough context for informed continuation
 
-## Help System (`/prompt help [topic]`)
+## When to Use Context Handoff
 
-### **Available Help Topics:**
+**Primary use case**: When your current LLM session is approaching context limits or you need to transition to a fresh session while preserving project understanding.
 
-**Commands:**
-- `tdd` - Test-driven development workflow and actions
-- `check` - Quality verification and validation
-- `next` - Feature implementation process
-- `claude-md` - Instruction file maintenance
+**Ideal scenarios:**
+- Long development sessions with accumulated context
+- Switching between different LLM providers or models
+- Taking breaks and resuming work later
+- Onboarding new team members to current project state
+- Creating checkpoints during complex development tasks
 
-**Workflows:**
-- `workflow` - Complete development process
-- `learning` - Knowledge preservation and skill building
-- `quality` - Code quality and validation standards
-
-**Quick Reference:**
-- `commands` - List all available commands
-- `examples` - Common usage patterns and examples
-
-### **Command Quick Reference:**
-- **`/check`** - Comprehensive quality verification
-- **`/next <task>`** - Structured feature implementation  
-- **`/tdd <feature|action>`** - TDD workflow and test management
-- **`/claude-md [action]`** - Maintain instruction file
-- **`/prompt [focus|help]`** - Context handoff or help
-
-**Most common usage:**
-- `/prompt` - Generate handoff when context window is getting full
-- `/prompt help workflow` - Get complete development process guidance
-
-The default `/prompt` command is designed for seamless LLM handoffs when you need to continue work in a fresh session.
+**The generated handoff includes everything needed for seamless continuation without losing development momentum or project understanding.**

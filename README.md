@@ -21,7 +21,7 @@ curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/mai
 git clone https://github.com/yourusername/your-new-repo.git
 cd your-new-repo
 claude                                # Start Claude Code
-/tdd "implement user authentication"  # Your first TDD feature!
+/dev "implement user authentication"  # Your first TDD feature!
 ```
 
 ### Option 2: Add to Existing Project
@@ -30,7 +30,7 @@ claude                                # Start Claude Code
 # Quick copy to existing project
 curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
 claude                 # Start Claude Code in your project
-/tdd "your first feature"
+/dev "your first feature"
 ```
 
 ### Option 3: Manual Setup
@@ -46,7 +46,7 @@ chmod +x setup-claude-project.sh
 
 ## What's This?
 
-A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 6 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
+A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 8 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
 
 **Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
 
@@ -83,8 +83,8 @@ Instead of this traditional workflow:
 
 You get this agentic workflow:
 ```bash
-/tdd "user authentication with JWT tokens"
-# Claude writes tests, implements code, runs tests, fixes issues
+/dev "user authentication with JWT tokens"
+# Claude writes tests first, implements code, runs tests, fixes issues
 /check  # Validates quality automatically
 /ship "add JWT authentication system"  # Creates commit with docs
 ```
@@ -108,7 +108,7 @@ claude  # Start the interactive session
 🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
 🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
 📚 **Learning-First Approach** - Build senior-level skills, not just working code  
-⚡ **6 Power Commands** - `/tdd`, `/check`, `/ship`, `/next`, `/prompt`, `/claude-md`  
+⚡ **8 Power Commands** - `/dev`, `/debug`, `/refactor`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
 🔧 **Multi-Language Support** - Works with any tech stack  
 📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
 
@@ -127,12 +127,12 @@ claude  # Start the interactive session
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| **`/tdd`** | Start with tests | `/tdd "user login"` |
+| **`/dev`** | TDD-first development | `/dev "user login"` |
 | **`/debug`** | Systematic debugging | `/debug "login fails"` |
 | **`/refactor`** | Code improvement | `/refactor "simplify auth"` |
 | **`/check`** | Quality gate | `/check` |
 | **`/ship`** | Commit & document | `/ship "add auth"` |
-| **`/next`** | Structured implementation | `/next "fix bug"` |
+| **`/help`** | Get help & guidance | `/help dev` |
 | **`/prompt`** | Context handoff | `/prompt` |
 | **`/claude-md`** | Update instructions | `/claude-md refresh` |
 
@@ -140,7 +140,7 @@ claude  # Start the interactive session
 
 **New Feature (TDD-first):**
 ```bash
-/tdd "user login"        # Write tests first
+/dev "user login"        # Write tests first, then implement
 /check                   # Ensure quality  
 /ship "add user login"   # Document & commit
 ```
@@ -161,14 +161,15 @@ claude  # Start the interactive session
 
 **Feature Enhancement:**
 ```bash
-/next "improve login"    # Structured approach
+/dev "improve login"     # TDD approach for enhancements
 /check                   # Validate changes
 /ship "enhance login"    # Commit changes
 ```
 
 **Need Help?**
 ```bash
-/prompt help             # Get guidance
+/help                    # Get help overview
+/help dev                # Get help on TDD workflow
 /claude-md refresh       # Update instructions
 ```
 
@@ -184,13 +185,13 @@ Complete instruction file with:
 
 ### `.claude/commands/`
 Eight powerful commands for systematic development:
-- `check.md` - Comprehensive quality verification
+- `dev.md` - TDD-first development workflow (primary command)
 - `debug.md` - Systematic debugging and root cause analysis
 - `refactor.md` - Systematic code refactoring and improvement workflows
-- `next.md` - Structured implementation workflow
-- `tdd.md` - Complete TDD and test management
+- `check.md` - Comprehensive quality verification
 - `ship.md` - Roadmap updates and commit workflow
-- `prompt.md` - Context handoff and help system
+- `help.md` - Interactive help and guidance system
+- `prompt.md` - Context handoff for LLM transitions
 - `claude-md.md` - Instruction file maintenance
 
 ### Configuration
