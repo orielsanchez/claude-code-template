@@ -36,10 +36,12 @@ claude                 # Start Claude Code in your project
 ### Option 3: Manual Setup
 
 ```bash
-# Download and run interactive setup
-curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
-chmod +x setup-claude-project.sh
-./setup-claude-project.sh
+# Download and run simplified setup
+curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-simple.sh
+chmod +x setup-simple.sh
+./setup-simple.sh my-project        # Create new project
+# OR
+./setup-simple.sh                   # Add to current directory
 ```
 
 ---
@@ -245,6 +247,15 @@ If this template helps your development workflow, consider supporting its contin
 - 🐛 Report issues and suggest improvements
 - 📢 Share with your team and community
 - 🤝 Contribute improvements and documentation
+
+## Recent Updates
+
+**v1.1 - Simplified Setup** *(Latest)*
+- New `setup-simple.sh` script with streamlined 3-scenario workflow
+- Maintains full framework auto-detection capabilities
+- Backup system for existing Claude setups
+- Comprehensive TDD test coverage (17 new tests)
+- Cleaner user experience with better error handling
 
 ## Contributing
 
