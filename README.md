@@ -52,7 +52,7 @@ You get this agentic workflow:
 **First time?** Install Claude Code:
 ```bash
 npm install -g @anthropic-ai/claude-code
-claude-code  # Start the interactive session
+claude  # Start the interactive session
 ```
 
 **Then use this template** (instructions below) to get systematic workflows and quality enforcement.
@@ -99,7 +99,7 @@ curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/mai
 ```bash
 git clone https://github.com/yourusername/your-new-repo.git
 cd your-new-repo
-claude-code                           # Start Claude Code
+claude                                # Start Claude Code
 /tdd "implement user authentication"  # Your first TDD feature!
 ```
 
@@ -108,7 +108,7 @@ claude-code                           # Start Claude Code
 ```bash
 # Quick copy to existing project
 curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
-claude-code            # Start Claude Code in your project
+claude                 # Start Claude Code in your project
 /tdd "your first feature"
 ```
 
