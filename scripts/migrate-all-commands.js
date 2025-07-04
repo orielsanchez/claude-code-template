@@ -12,6 +12,7 @@ const commandConfigs = {
     actionVerb: 'investigate',
     target: 'issue',
     action: 'attempting any fixes',
+    subtitle: '5-phase systematic debugging',
     
     usageExamples: [
       { command: '/debug <issue>', description: 'Full systematic debugging workflow' },
@@ -169,6 +170,7 @@ The \`/debug\` command transforms reactive firefighting into systematic engineer
     actionVerb: 'analyze',
     target: 'code',
     action: 'making changes',
+    subtitle: '4-phase systematic refactoring',
     
     usageExamples: [
       { command: '/refactor <target>', description: 'Full systematic refactoring workflow' },
@@ -502,8 +504,7 @@ The \`/ship\` command ensures that every change is properly documented, validate
     
     integrations: [],
     
-    content: `
-Comprehensive help and guidance for the Claude Code Template command system and workflows.
+    content: `Comprehensive help and guidance for the Claude Code Template command system and workflows.
 
 ## Commands Overview
 
