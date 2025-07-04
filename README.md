@@ -2,6 +2,12 @@
 
 **Professional development setup with Claude Code integration for systematic, high-quality software development.**
 
+## What's This?
+
+A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 6 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
+
+**Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
+
 ## Features
 
 - **Test-Driven Development (TDD)** workflow with AI assistance
@@ -13,76 +19,71 @@
 
 ## Quick Start
 
+### 🚀 One-Line Setup (Recommended)
+
+```bash
+curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh | bash
+```
+
 ### Option 1: Use as GitHub Template
 
-1. Click **"Use this template"** button above
-2. Create your new repository
-3. Clone and start developing:
+1. **Click "Use this template"** → Create your repository
+2. **Clone and start coding:**
 
 ```bash
 git clone https://github.com/yourusername/your-new-repo.git
 cd your-new-repo
-
-# Start development with TDD
-/tdd "implement user authentication"
-/check  # Quality verification
-/ship "add user authentication system"
+/tdd "implement user authentication"  # Start with TDD!
 ```
 
-### Option 2: Copy to Existing Project
+### Option 2: Add to Existing Project
 
 ```bash
-# Download the template files
-curl -L https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz
-cp -r claude-code-template-main/{CLAUDE.md,.claude} your-project/
-cd your-project
-
-# Begin development
+# Quick copy to existing project
+curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
 /tdd "your first feature"
 ```
 
-### Option 3: Automated Setup Script
+### Option 3: Manual Setup
 
 ```bash
-# Download and run the interactive setup script
-curl -o setup-claude-project.sh https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
+# Download and run interactive setup
+curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
 chmod +x setup-claude-project.sh
 ./setup-claude-project.sh
 ```
 
-## Available Commands
+## Commands Overview
 
-### Core Development
-- **`/check`** - Quality verification with zero tolerance for issues
-- **`/next <task>`** - Structured feature implementation with TDD integration
-- **`/tdd <feature|action>`** - Complete TDD workflow and test management
-- **`/ship [message]`** - Update roadmap, validate quality, and commit changes
+| Command | Purpose | Example |
+|---------|---------|---------|
+| **`/tdd`** | Start with tests | `/tdd "user login"` |
+| **`/check`** | Quality gate | `/check` |
+| **`/ship`** | Commit & document | `/ship "add auth"` |
+| **`/next`** | Structured implementation | `/next "fix bug"` |
+| **`/prompt`** | Context handoff | `/prompt` |
+| **`/claude-md`** | Update instructions | `/claude-md refresh` |
 
-### System & Help
-- **`/prompt`** - Generate LLM handoff for context transitions (default)
-- **`/prompt help [topic]`** - Interactive help for commands and workflows
-- **`/claude-md <action>`** - Essential instruction file maintenance
+## Typical Workflow
 
-## Development Workflow
-
-### Standard Feature Development
+**New Feature (TDD-first):**
 ```bash
-/tdd "implement user login"     # Full TDD cycle: RED → GREEN → REFACTOR
-/check                          # Quality verification
-/ship "add user login feature"  # Update docs and commit
+/tdd "user login"        # Write tests first
+/check                   # Ensure quality  
+/ship "add user login"   # Document & commit
 ```
 
-### Legacy Code Enhancement
+**Fix/Refactor:**
 ```bash
-/tdd design existing_module     # Retrofit tests for existing code
-/next "refactor with safety"    # Structured refactoring
-/ship "improve architecture"    # Document and commit
+/next "fix login bug"    # Structured approach
+/check                   # Validate changes
+/ship "fix login issue"  # Commit changes
 ```
 
-### Context Management
+**Need Help?**
 ```bash
-/prompt                         # Generate handoff when context gets full
-/prompt help workflow           # Get development process guidance
+/prompt help             # Get guidance
+/claude-md refresh       # Update instructions
 ```
 
 ## What's Included
