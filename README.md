@@ -214,6 +214,19 @@ Add project creation function to your shell:
 # Then use: new-claude-project my-awesome-app
 ```
 
+## Support This Project
+
+If this template helps your development workflow, consider supporting its continued development:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-pink?logo=github)](https://github.com/sponsors/orielsanchez)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/orielsanchez)
+
+**Other ways to support:**
+- ⭐ Star this repository
+- 🐛 Report issues and suggest improvements
+- 📢 Share with your team and community
+- 🤝 Contribute improvements and documentation
+
 ## Contributing
 
 This template represents battle-tested practices for AI-assisted development. Contributions should:
