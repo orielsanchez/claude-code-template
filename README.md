@@ -250,7 +250,14 @@ If this template helps your development workflow, consider supporting its contin
 
 ## Recent Updates
 
-**v1.2 - Modular Framework Detection** *(Latest)*
+**v1.3 - Setup Script Consolidation** *(Latest)*
+- Eliminated 145 lines of duplicated code between setup scripts
+- Created robust lib/setup-utils.sh with 8 shared functions
+- Reduced setup-simple.sh by 13% and setup-claude-project.sh by 26%
+- Enhanced maintainability with centralized utility functions
+- Zero breaking changes, 100% backward compatibility maintained
+
+**v1.2 - Modular Framework Detection**
 - Refactored framework detection into specialized language detectors
 - Improved maintainability with single responsibility principle
 - Enhanced extensibility for adding new languages/frameworks
