@@ -1,6 +1,6 @@
 # Claude Code Commands Reference
 
-**7 powerful commands for systematic development**
+**8 powerful commands for systematic development**
 
 ## Core Commands
 
@@ -8,6 +8,7 @@
 - **`/check`** - Comprehensive quality verification with zero tolerance for issues
 - **`/next <task>`** - Structured feature implementation with TDD integration
 - **`/debug <issue>`** - Systematic debugging workflow with root cause analysis
+- **`/refactor <target>`** - Systematic code refactoring and improvement workflows
 
 ### **Test-Driven Development**
 - **`/tdd <feature|action>`** - Complete TDD workflow and test management

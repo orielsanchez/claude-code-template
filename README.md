@@ -129,6 +129,7 @@ claude  # Start the interactive session
 |---------|---------|---------|
 | **`/tdd`** | Start with tests | `/tdd "user login"` |
 | **`/debug`** | Systematic debugging | `/debug "login fails"` |
+| **`/refactor`** | Code improvement | `/refactor "simplify auth"` |
 | **`/check`** | Quality gate | `/check` |
 | **`/ship`** | Commit & document | `/ship "add auth"` |
 | **`/next`** | Structured implementation | `/next "fix bug"` |
@@ -151,7 +152,14 @@ claude  # Start the interactive session
 /ship "fix login issue"  # Commit changes
 ```
 
-**Refactor/Enhancement:**
+**Code Improvement:**
+```bash
+/refactor "simplify login logic"  # Systematic refactoring
+/check                            # Validate changes
+/ship "improve code quality"      # Commit changes
+```
+
+**Feature Enhancement:**
 ```bash
 /next "improve login"    # Structured approach
 /check                   # Validate changes
@@ -175,9 +183,10 @@ Complete instruction file with:
 - **Mastery progression tracking** - Skill development from Novice → Expert
 
 ### `.claude/commands/`
-Seven powerful commands for systematic development:
+Eight powerful commands for systematic development:
 - `check.md` - Comprehensive quality verification
 - `debug.md` - Systematic debugging and root cause analysis
+- `refactor.md` - Systematic code refactoring and improvement workflows
 - `next.md` - Structured implementation workflow
 - `tdd.md` - Complete TDD and test management
 - `ship.md` - Roadmap updates and commit workflow
