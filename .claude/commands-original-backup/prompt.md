@@ -2,18 +2,22 @@
 allowed-tools: all
 description: Context handoff prompts for seamless LLM transitions
 ---
+
 # Context Handoff System
+
+Generate comprehensive handoff prompts for seamless LLM transitions and continuity.
 
 **Usage:**
 - `/prompt` - Generate comprehensive handoff prompt (default)
 - `/prompt [focus_area]` - Generate focused handoff prompt for specific domain
 
 **Examples:**
-- `/prompt` - Generate comprehensive handoff prompt (default)
-- `/prompt [focus_area]` - Generate focused handoff prompt for specific domain
+- `/prompt` - Complete context handoff for LLM continuation
+- `/prompt debugging` - Generate debugging-focused context handoff
+- `/prompt architecture` - Generate architecture-focused context handoff
+- `/prompt testing` - Generate testing-focused context handoff
 
-
-Generate comprehensive handoff prompts for seamless LLM transitions and continuity.
+**For help and guidance, use `/help` instead.**
 
 ## Context Handoff (Default: `/prompt`)
 
@@ -52,11 +56,3 @@ Generate comprehensive handoff prompts for seamless LLM transitions and continui
 - Creating checkpoints during complex development tasks
 
 **The generated handoff includes everything needed for seamless continuation without losing development momentum or project understanding.**
-## Integration with Other Commands
-
-
-
-**TDD-First Quality Pipeline:**
-- **`/prompt` → `/check`**: Comprehensive quality validation (tests + linting + formatting)
-- **`/prompt` → `/debug`**: When tests fail unexpectedly, switch to systematic debugging  
-- **`/prompt` → `/ship`**: Create final commit with proper documentation

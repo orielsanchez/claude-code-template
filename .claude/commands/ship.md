@@ -2,16 +2,22 @@
 allowed-tools: all
 description: Update roadmap documentation and commit changes with quality validation
 ---
+# Documentation Updates & Commit Workflow
 
-# Ship Changes
-
-Complete workflow to update roadmap, validate quality, and commit changes.
-
-**Usage:** `/ship [message]`
+**Usage:**
+- `/ship [message]` - Ship with specific commit message
+- `/ship` - Ship with auto-generated message based on changes
 
 **Examples:**
-- `/ship "implement user authentication"` - Ship with specific commit message
+- `/ship [message]` - Ship with specific commit message
 - `/ship` - Ship with auto-generated message based on changes
+
+**YOU MUST SAY:** "Let me systematically approach this task before proceeding."
+
+For complex tasks, say: "Let me think deeply about this problem using systematic investigation."
+
+
+Complete workflow to update roadmap, validate quality, and commit changes.
 
 ## Complete Ship Workflow
 
@@ -65,7 +71,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 **Typical Usage Pattern:**
 ```bash
-/tdd "user authentication"     # Implement with TDD
+/dev "user authentication"     # Implement with TDD
 /check                         # Validate quality
 /ship "implement auth system"  # Update docs and commit
 ```
@@ -78,18 +84,44 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Roadmap reflects current state
 - Commit message is meaningful
 
+The `/ship` command ensures that every change is properly documented, validated, and committed with full context preservation.
+## Integration with Other Commands
+
+- **`/ship` → `/dev`**: Integration workflow
+- **`/ship` → `/debug`**: Integration workflow
+- **`/ship` → `/refactor`**: Integration workflow
+- **`/ship` → `/check`**: Integration workflow
+
+**TDD-First Quality Pipeline:**
+- **`/ship` → `/check`**: Comprehensive quality validation (tests + linting + formatting)
+- **`/ship` → `/debug`**: When tests fail unexpectedly, switch to systematic debugging  
+- **`/ship` → `/ship`**: Create final commit with proper documentation
+**Quality Requirements**:
+- Follow all forbidden patterns from CLAUDE.md
+- Use proper error handling for your language (Result types, exceptions)
+- No unwrap(), expect(), panic!() in production code
+- Delete old code when replacing functionality
+
+**Universal Quality Standards:**
+- **Delete** old code when replacing it
+- **Meaningful names**: `user_id` not `id`, `process_payment` not `do_stuff`
+- **Early returns** to reduce nesting depth
+- **Proper error handling** for your language (exceptions, Result types, etc.)
+- **Comprehensive tests** for complex logic
+- **Consistent code style** following project/language conventions
 ## Learning Integration
 
-**Knowledge Preservation:**
-- Document what was learned during implementation
-- Update mastery progression if significant learning occurred
-- Record successful patterns for future reference
-- Identify areas for continued learning
+### **Before Starting**:
+- State your hypothesis about the problem/approach
+- Identify which concepts you want to understand deeply
+- Set learning objectives: "I want to understand X pattern"
 
-**Roadmap Evolution:**
-- Mark completed features and milestones
-- Adjust future priorities based on implementation insights
-- Document any scope changes or new requirements discovered
-- Plan next logical development steps
+### **During Implementation**:
+- Explain the "why" behind each architectural decision
+- Connect new patterns to existing knowledge
+- Document mental models and intuition being built
 
-The `/ship` command ensures that every change is properly documented, validated, and committed with full context preservation.
+### **After Completion**:
+- Summarize key insights gained
+- Update personal knowledge base with new patterns
+- Identify areas for deeper independent study

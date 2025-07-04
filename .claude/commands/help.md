@@ -2,10 +2,7 @@
 allowed-tools: all
 description: Interactive help system for commands, workflows, and development guidance
 ---
-
-# Help System
-
-Comprehensive help and guidance for the Claude Code Template command system and workflows.
+# Interactive Help & Guidance System
 
 **Usage:**
 - `/help` - Show main help overview and command list
@@ -13,10 +10,12 @@ Comprehensive help and guidance for the Claude Code Template command system and 
 - `/help <topic>` - Get guidance on workflows and concepts
 
 **Examples:**
-- `/help` - Main help overview
-- `/help dev` - Detailed help on TDD-first development workflow
-- `/help workflow` - Complete development process guidance
-- `/help quality` - Code quality standards and validation
+- `/help` - Show main help overview and command list
+- `/help <command>` - Get detailed help for specific command
+- `/help <topic>` - Get guidance on workflows and concepts
+
+
+Comprehensive help and guidance for the Claude Code Template command system and workflows.
 
 ## Commands Overview
 
@@ -108,137 +107,22 @@ Comprehensive help and guidance for the Claude Code Template command system and 
 
 **3. Document Changes:** `/ship "refactor: description of improvements"`
 
-## Detailed Command Help
+## Best Practices
 
-### **`/help dev`** - TDD-First Development
-
-**Core Philosophy**: Test-driven development is not optional, it's the foundation of quality software.
-
-**Command Variants**:
-- `/dev <feature>` - Full TDD workflow starting with failing tests
-- `/dev` - Smart continuation based on current workspace state
-- `/dev plan <feature>` - TDD-oriented planning phase
-- `/dev test` - Test management hub (run, coverage, review, debug)
-- `/dev implement` - Implementation phase (only after tests exist)
-- `/dev refactor` - Refactoring with test safety net
-
-**TDD Phases**:
-1. **RED**: Write failing tests that define the exact behavior
-2. **GREEN**: Implement minimal code to make tests pass
-3. **REFACTOR**: Improve design with test protection
-
-**Context Detection**:
-- No tests exist → Starts with RED phase (write tests)
-- Tests failing → GREEN phase (implement to pass tests)
-- Tests passing → REFACTOR phase (improve with safety)
-
-### **`/help debug`** - Systematic Debugging
-
-**5-Phase Debugging Process**:
-1. **ISOLATE**: Narrow down the problem scope
-2. **REPRODUCE**: Create reliable reproduction steps
-3. **INVESTIGATE**: Systematic root cause analysis  
-4. **FIX**: Implement proper solution with tests
-5. **VALIDATE**: Ensure fix works and doesn't break anything
-
-**Best for**: Complex bugs, mysterious errors, performance issues, race conditions
-
-### **`/help refactor`** - Code Improvement
-
-**4-Phase Refactoring Process**:
-1. **SAFETY NET**: Ensure comprehensive test coverage
-2. **ANALYZE**: Identify improvement opportunities
-3. **TRANSFORM**: Make changes systematically
-4. **VALIDATE**: Continuous testing during changes
-
-**Best for**: Code smells, performance optimization, architecture improvements
-
-### **`/help check`** - Quality Verification
-
-**Zero-Tolerance Quality Standards**:
-- All linters must pass with zero warnings
-- All tests must pass with meaningful coverage
-- Code formatting must be consistent
-- No forbidden patterns (defined in CLAUDE.md)
-- Security checks and performance validation
-
-**Quality Enforcement**:
-- Hooks prevent commits with quality issues
-- Automatic fixing where possible
-- Clear reporting of all issues
-
-### **`/help ship`** - Professional Commits
-
-**Automated Commit Workflow**:
-- Reviews all changes systematically
-- Updates relevant documentation
-- Generates professional commit messages
-- Follows conventional commit standards
-- Runs final quality checks
-
-**Documentation Updates**:
-- README updates for new features
-- API documentation for interface changes
-- Architecture docs for structural changes
-
-## Learning & Development
-
-### **TDD Mastery Progression**
-- **Novice**: Can write basic tests with guidance
-- **Intermediate**: Can design test suites independently  
-- **Advanced**: Can use TDD to drive architecture
-- **Expert**: Can teach TDD patterns to others
-
-### **Quality Standards**
-- **Universal Forbidden Patterns**: No emojis, no TODOs in production, proper error handling
-- **Language-Specific Rules**: Rust (no unwrap/panic), TypeScript (no any), Python (type hints)
-- **Architecture Principles**: Single responsibility, early returns, meaningful names
-
-### **Workflow Mastery**
-- **Research → Plan → Test → Implement → Ship**
-- **Always start with failing tests**
-- **Use tests to drive design decisions**
-- **Refactor fearlessly with test protection**
-
-## Troubleshooting
-
-### **Common Issues**
-
-**Command not found**: 
-- Check that Claude Code is installed: `npm install -g @anthropic-ai/claude-code`
-- Verify you're in a directory with `.claude/commands/` folder
-
-**Quality checks failing**:
-- Run `/check` to see specific issues
-- Fix linting/formatting issues automatically where possible
-- Never ignore quality warnings - fix them immediately
-
-**TDD workflow confusion**:
-- Always start with `/dev <feature>` for new development
-- Let AI guide you through proper TDD phases
-- Use `/dev test` for test management operations
-
-**Getting stuck in debugging**:
-- Use `/debug` for systematic investigation
-- Don't spiral into complex solutions
-- Step back and simplify when confused
-
-### **Best Practices**
-
-**Daily Workflow**:
+**Daily Workflow:**
 1. Start each feature with `/dev <description>`
 2. Let TDD guide your implementation
 3. Run `/check` frequently (after every few changes)
 4. Use `/ship` to commit completed work
 5. Use `/prompt` when switching contexts
 
-**Quality Maintenance**:
+**Quality Maintenance:**
 - Never ignore linter warnings or test failures
 - Fix quality issues immediately, don't defer
 - Use hooks to prevent bad patterns from being committed
 - Maintain zero-tolerance quality standards
 
-**Learning Focus**:
+**Learning Focus:**
 - Understand WHY tests come first, not just HOW
 - Build systematic thinking skills through TDD
 - Document insights and patterns you discover
@@ -257,11 +141,12 @@ Comprehensive help and guidance for the Claude Code Template command system and 
 - `/debug` and `/refactor` for systematic improvement workflows
 - `/check` and `/ship` for quality gates and professional commits
 
-**Need specific guidance?**
-- `/help <command>` for detailed command documentation
-- `/help <topic>` for workflow and concept guidance
-- `/claude-md refresh` to update development guidelines
-
----
-
 **Remember**: This system is designed to build senior-level development skills through systematic, test-driven workflows. Every command reinforces best practices and quality standards.
+## Integration with Other Commands
+
+
+
+**TDD-First Quality Pipeline:**
+- **`/help` → `/check`**: Comprehensive quality validation (tests + linting + formatting)
+- **`/help` → `/debug`**: When tests fail unexpectedly, switch to systematic debugging  
+- **`/help` → `/ship`**: Create final commit with proper documentation
