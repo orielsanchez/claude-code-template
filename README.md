@@ -250,7 +250,17 @@ If this template helps your development workflow, consider supporting its contin
 
 ## Recent Updates
 
-**v1.4 - Hook System Modularization** *(Latest)*
+**v1.5 - Command Documentation Modularization** *(Latest)*
+- Implemented comprehensive command documentation modularization system
+- Created lib/command-utils/ with modular templates and generators
+- Achieved 71% size reduction in dev.md command (14,099 → 4,025 characters)
+- Added 17 comprehensive tests ensuring reliability and preventing regressions
+- Eliminated ~300-400 lines of duplication across 8 command files
+- Established consistent modular structure for all workflow commands
+- TDD-first implementation with complete test coverage (24 new tests)
+- Zero breaking changes, maintains full command functionality
+
+**v1.4 - Hook System Modularization**
 - Refactored smart-lint.sh from 587 to 328 lines (44% reduction)
 - Created modular architecture with lib/hook-utils.sh (185 lines shared utilities)
 - Added 5 language-specific modules in lib/linters/ (Go, Python, JS/TS, Rust, Nix)
