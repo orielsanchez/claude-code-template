@@ -8,12 +8,9 @@
 
 set -e  # Exit on any error
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Source shared utilities
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/lib/setup-utils.sh"
 
 # Template directory
 TEMPLATE_DIR="${CLAUDE_TEMPLATE_DIR:-$HOME/Projects/claude-code-template}"
@@ -21,10 +18,7 @@ TEMPLATE_DIR="${CLAUDE_TEMPLATE_DIR:-$HOME/Projects/claude-code-template}"
 echo -e "${BLUE}🚀 Claude Code Setup${NC}"
 echo "=================================="
 
-# Output functions
-print_status() { echo -e "${GREEN}✓${NC} $1"; }
-print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
-print_error() { echo -e "${RED}✗${NC} $1"; }
+# Utility functions now sourced from lib/setup-utils.sh
 
 # Check if template directory exists
 if [ ! -d "$TEMPLATE_DIR" ]; then
@@ -44,24 +38,10 @@ detect_scenario() {
     fi
 }
 
-# Framework detection using existing system
+# Framework detection using shared utility
 detect_frameworks() {
     local project_dir="$1"
-    
-    # Use enhanced framework detection if available
-    if command -v node >/dev/null 2>&1 && [ -f "$TEMPLATE_DIR/lib/framework-detector.js" ]; then
-        cat > /tmp/simple-detect.js << 'EOF'
-const { detectFrameworks } = require(process.argv[2] + '/lib/framework-detector.js');
-const result = detectFrameworks(process.argv[3]);
-console.log(JSON.stringify(result));
-EOF
-        
-        local result=$(node /tmp/simple-detect.js "$TEMPLATE_DIR" "$project_dir" 2>/dev/null || echo '{"primary":"generic"}')
-        rm -f /tmp/simple-detect.js
-        echo "$result"
-    else
-        echo '{"primary":"generic","languages":[],"frameworks":[],"tools":[],"testFrameworks":[],"bundlers":[]}'
-    fi
+    detect_framework_with_fallback "$project_dir" "$TEMPLATE_DIR"
 }
 
 # Create new project
@@ -76,10 +56,7 @@ create_new_project() {
     cd "$project_name"
     
     # Initialize git
-    if [ ! -d ".git" ]; then
-        git init
-        print_status "Initialized git repository"
-    fi
+    init_git_repository
     
     # Initialize project based on framework
     case $framework in
@@ -163,28 +140,10 @@ EOF
     fi
     
     # Fallback: Copy basic Claude setup
-    cp -r "$TEMPLATE_DIR/CLAUDE.md" "$project_dir/"
-    cp -r "$TEMPLATE_DIR/.claude" "$project_dir/"
-    print_status "Added Claude Code configuration"
+    copy_claude_setup "$TEMPLATE_DIR" "$project_dir"
     
     # Create appropriate .gitignore if it doesn't exist
-    if [ ! -f "$project_dir/.gitignore" ]; then
-        case $primary in
-            react|nextjs|vue)
-                echo -e "node_modules/\ndist/\nbuild/\n.env.local\n.env" > "$project_dir/.gitignore"
-                ;;
-            python|django|flask)
-                echo -e "__pycache__/\n*.pyc\nvenv/\n.venv/\n.env" > "$project_dir/.gitignore"
-                ;;
-            rust)
-                echo -e "/target/\nCargo.lock\n*.pdb" > "$project_dir/.gitignore"
-                ;;
-            *)
-                echo -e ".env\n.DS_Store\n*.log" > "$project_dir/.gitignore"
-                ;;
-        esac
-        print_status "Created .gitignore"
-    fi
+    generate_gitignore "$primary" "$project_dir/.gitignore"
 }
 
 # Update existing Claude setup
