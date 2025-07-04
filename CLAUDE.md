@@ -22,18 +22,18 @@ These are not suggestions. Fix ALL issues before continuing.
 
 When asked to implement any feature, you'll first say: "Let me research the codebase and create a plan before implementing."
 
-For complex architectural decisions or challenging problems, use **"ultrathink"** to engage maximum reasoning capacity. Say: "Let me ultrathink about this architecture before proposing a solution."
+For complex architectural decisions or challenging problems, use enhanced thinking tools to engage maximum reasoning capacity. Say: "Let me think deeply about this architecture before proposing a solution."
 
-### USE MULTIPLE AGENTS!
+### USE TASK DELEGATION!
 
-_Leverage subagents aggressively_ for better results:
+_Leverage Claude Code's capabilities strategically_ for better results:
 
-- Spawn agents to explore different parts of the codebase in parallel
-- Use one agent to write tests while another implements features
-- Delegate research tasks: "I'll have an agent investigate the database schema while I analyze the API structure"
-- For complex refactors: One agent identifies changes, another implements them
+- Break complex tasks into focused investigations
+- Use systematic workflows for comprehensive analysis
+- Delegate research tasks: "Let me investigate the database schema while analyzing the API structure"
+- For complex refactors: Identify changes first, then implement systematically
 
-Say: "I'll spawn agents to tackle different aspects of this problem" whenever a task has multiple independent parts.
+Use the Task tool and systematic workflows whenever a problem has multiple independent parts.
 
 ### Enhanced Reality Checkpoints
 
@@ -51,7 +51,7 @@ Say: "I'll spawn agents to tackle different aspects of this problem" whenever a 
 - Weekly: Review and explain recent patterns learned
 - Monthly: Implement something similar from scratch to test retention
 
-Run: `cargo fmt && cargo test && cargo clippy`
+Run your project's quality checks (tests, linting, formatting)
 
 > Why: You can lose track of what's actually working. These checkpoints prevent cascading failures and knowledge brownouts.
 
@@ -67,10 +67,10 @@ Run: `cargo fmt && cargo test && cargo clippy`
 
 This includes:
 
-- Formatting issues (rustfmt)
-- Linting violations (clippy)
-- Forbidden patterns (unsafe blocks, unwrap(), panic!())
-- ALL other checks
+- Formatting issues (prettier, black, rustfmt, etc.)
+- Linting violations (eslint, flake8, clippy, etc.) 
+- Forbidden patterns (defined by your project)
+- ALL other quality checks
 
 Your code must be 100% clean. No exceptions.
 
@@ -162,71 +162,80 @@ Your code must be 100% clean. No exceptions.
 - [ ] What comes next
 ```
 
-## Rust-Specific Rules
+## Language-Specific Quality Rules
 
-### FORBIDDEN - NEVER DO THESE:
+### UNIVERSAL FORBIDDEN PATTERNS:
 
-- **NO unwrap()** or **expect()** in production code - use proper error handling!
-- **NO panic!()** - use `Result<T, E>` for error handling!
 - **NO emojis** in code, comments, documentation, commit messages, or any project files
-- **NO** keeping old and new code together
+- **NO** keeping old and new code together - delete when replacing
 - **NO** migration functions or compatibility layers
-- **NO** versioned function names (process_v2, handle_new)
-- **NO** custom error types without clear hierarchy
-- **NO** TODOs in final code
-- **NO** unsafe blocks without explicit justification
+- **NO** versioned function names (processV2, handleNew, etc.)
+- **NO** TODOs in final production code
+- **NO** console.log/print statements in production
+- **NO** hardcoded secrets or API keys
+- **NO** broad exception catching without specific handling
 
-**AUTOMATED ENFORCEMENT**: The clippy hook will BLOCK commits that violate these rules.  
+### Language-Specific Additions:
+
+**Rust:** No unwrap(), expect(), panic!() - use Result<T, E>
+**JavaScript/TypeScript:** No any types, use strict mode
+**Python:** No bare except clauses, use type hints
+**Go:** No empty error checks, handle all errors
+
+**AUTOMATED ENFORCEMENT**: Quality hooks will BLOCK commits that violate these rules.  
 When you see "FORBIDDEN PATTERN", you MUST fix it immediately!
 
-### Required Standards:
+### Universal Quality Standards:
 
 - **Delete** old code when replacing it
-- **Meaningful names**: `user_id` not `id`
-- **Early returns** to reduce nesting
-- **Concrete types** from constructors: `fn new() -> Self`
-- **Proper error handling**: `Result<T, E>` and `?` operator
-- **Table-driven tests** for complex logic
-- **Channels for synchronization**: Use `tokio::sync` or `std::sync::mpsc`
-- **Async/await** for I/O operations, not blocking threads
+- **Meaningful names**: `user_id` not `id`, `process_payment` not `do_stuff`
+- **Early returns** to reduce nesting depth
+- **Proper error handling** for your language (exceptions, Result types, etc.)
+- **Comprehensive tests** for complex logic
+- **Consistent code style** following project/language conventions
+- **Clear separation of concerns** - single responsibility principle
 
 ### Example Patterns:
 
-```rust
+**JavaScript/TypeScript:**
+```javascript
 // GOOD: Proper error handling
-fn parse_config(path: &Path) -> Result<Config, ConfigError> {
-    let content = fs::read_to_string(path)?;
-    toml::from_str(&content).map_err(ConfigError::Parse)
+async function fetchUserData(id: string): Promise<User | null> {
+  try {
+    const response = await fetch(`/api/users/${id}`);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    return null;
+  }
 }
 
-// BAD: Using unwrap
-fn parse_config(path: &Path) -> Config {
-    let content = fs::read_to_string(path).unwrap();
-    toml::from_str(&content).unwrap()
+// BAD: No error handling
+async function fetchUserData(id: string): Promise<User> {
+  const response = await fetch(`/api/users/${id}`);
+  return await response.json(); // Can throw!
 }
+```
 
-// GOOD: Constructor pattern
-impl Server {
-    fn new(config: Config) -> Self {
-        Self { config }
-    }
-}
+**Python:**
+```python
+# GOOD: Proper error handling
+def parse_config(path: Path) -> Optional[Config]:
+    try:
+        with open(path) as f:
+            return Config.from_json(f.read())
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logger.error(f"Config parse failed: {e}")
+        return None
 
-// GOOD: Async with proper error handling
-async fn fetch_data(url: &str) -> Result<Data, reqwest::Error> {
-    let response = reqwest::get(url).await?;
-    let data = response.json().await?;
-    Ok(data)
-}
-
-// GOOD: Channel synchronization
-use tokio::sync::mpsc;
-
-async fn worker(mut rx: mpsc::Receiver<Task>) {
-    while let Some(task) = rx.recv().await {
-        task.execute().await;
-    }
-}
+# BAD: Bare except
+def parse_config(path: Path) -> Config:
+    try:
+        with open(path) as f:
+            return Config.from_json(f.read())
+    except:  # Too broad!
+        return Config()
 ```
 
 ## Implementation Standards
@@ -241,24 +250,35 @@ async fn worker(mut rx: mpsc::Receiver<Task>) {
 
 ### Testing Strategy
 
-- Complex business logic → Write tests first
-- Red -> Green -> Refactor
-- Simple CRUD → Write tests after
-- Hot paths → Add benchmarks
-- Skip tests for main() and simple CLI parsing
+- **Complex business logic** → Write tests first (TDD)
+- **Red → Green → Refactor** cycle for new features
+- **Simple operations** → Write tests after implementation
+- **Critical paths** → Add performance/integration tests
+- **Skip testing** trivial getters/setters and framework boilerplate
 
-### Project Structure
+### Project Structure Examples
 
+**Node.js/TypeScript:**
 ```
 src/
-├── main.rs       # Application entrypoint
-├── lib.rs        # Library root
-├── bin/          # Additional binaries
-├── modules/      # Core modules
-├── error.rs      # Error types
-└── config.rs     # Configuration
-tests/            # Integration tests
-benches/          # Benchmarks
+├── index.ts      # Application entrypoint
+├── lib/          # Core modules
+├── types/        # Type definitions
+├── utils/        # Utility functions
+└── config/       # Configuration
+tests/            # Test files
+docs/             # Documentation
+```
+
+**Python:**
+```
+src/package_name/
+├── __init__.py   # Package entrypoint
+├── core/         # Core modules
+├── utils/        # Utility modules
+└── config.py     # Configuration
+tests/            # Test files
+docs/             # Documentation
 ```
 
 ## Problem-Solving Together
@@ -266,8 +286,8 @@ benches/          # Benchmarks
 When you're stuck or confused:
 
 1. **Stop** - Don't spiral into complex solutions
-2. **Delegate** - Consider spawning agents for parallel investigation
-3. **Ultrathink** - For complex problems, say "I need to ultrathink through this challenge" to engage deeper reasoning
+2. **Break it down** - Use systematic investigation tools
+3. **Think deeply** - For complex problems, engage enhanced reasoning
 4. **Step back** - Re-read the requirements
 5. **Simplify** - The simple solution is usually correct
 6. **Ask** - "I see two approaches: [A] vs [B]. Which do you prefer?"
@@ -280,15 +300,16 @@ My insights on better approaches are valued - please ask for them!
 
 - No premature optimization
 - Benchmark before claiming something is faster
-- Use `cargo bench` for real bottlenecks
-- Profile with `perf` or `cargo flamegraph`
+- Use appropriate profiling tools for your language
+- Focus on algorithmic improvements over micro-optimizations
 
 ### **Security Always**:
 
-- Validate all inputs
-- Use `ring` or `rustls` for cryptography
-- Prepared statements for SQL (never concatenate!)
-- Sanitize user input
+- Validate all inputs at boundaries
+- Use established crypto libraries (never roll your own)
+- Parameterized queries for SQL (never concatenate!)
+- Sanitize user input and escape outputs
+- Follow OWASP guidelines for your stack
 
 ## Communication Protocol
 
@@ -305,12 +326,12 @@ My insights on better approaches are valued - please ask for them!
 "The current approach works, but I notice [observation].
 Would you like me to [specific improvement]?"
 
-## Rust Mastery Progression
+## Technical Mastery Progression
 
 ### Current Focus: [Update weekly]
-- Target concept: Memory safety and ownership patterns
-- Learning method: Implement data structures from scratch
-- Knowledge gap: Advanced lifetime management
+- Target concept: Core patterns for your tech stack
+- Learning method: Implement features from scratch with understanding
+- Knowledge gap: [Identify specific areas needing improvement]
 
 ### Depth Markers:
 - **Novice**: Can use with AI guidance
@@ -318,12 +339,12 @@ Would you like me to [specific improvement]?"
 - **Advanced**: Can implement from first principles
 - **Expert**: Can teach and extend the concept
 
-### Mastery Areas to Track:
-- **Ownership & Borrowing**: Novice → Intermediate → Advanced → Expert
-- **Async/Await Internals**: Novice → Intermediate → Advanced → Expert
-- **Memory Layout & Performance**: Novice → Intermediate → Advanced → Expert
+### Universal Mastery Areas to Track:
+- **System Design & Architecture**: Novice → Intermediate → Advanced → Expert
 - **Error Handling Patterns**: Novice → Intermediate → Advanced → Expert
-- **Concurrency Primitives**: Novice → Intermediate → Advanced → Expert
+- **Testing & Quality Assurance**: Novice → Intermediate → Advanced → Expert
+- **Performance & Optimization**: Novice → Intermediate → Advanced → Expert
+- **Security Best Practices**: Novice → Intermediate → Advanced → Expert
 - **Test-Driven Development**: Novice → Intermediate → Advanced → Expert
 
 ### TDD Mastery Progression:
