@@ -250,7 +250,16 @@ If this template helps your development workflow, consider supporting its contin
 
 ## Recent Updates
 
-**v1.3 - Setup Script Consolidation** *(Latest)*
+**v1.4 - Hook System Modularization** *(Latest)*
+- Refactored smart-lint.sh from 587 to 328 lines (44% reduction)
+- Created modular architecture with lib/hook-utils.sh (185 lines shared utilities)
+- Added 5 language-specific modules in lib/linters/ (Go, Python, JS/TS, Rust, Nix)
+- Eliminated ~250 lines of duplicated code patterns across languages
+- Maintained 100% backward compatibility and existing configuration
+- Followed TDD-first approach with comprehensive testing
+- Enables easy addition of new programming languages
+
+**v1.3 - Setup Script Consolidation**
 - Eliminated 145 lines of duplicated code between setup scripts
 - Created robust lib/setup-utils.sh with 8 shared functions
 - Reduced setup-simple.sh by 13% and setup-claude-project.sh by 26%
