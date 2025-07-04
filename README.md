@@ -2,6 +2,48 @@
 
 **Professional development setup with Claude Code integration for systematic, high-quality software development.**
 
+## Quick Start
+
+**Prerequisites:** Install Claude Code: `npm install -g @anthropic-ai/claude-code`
+
+### 🚀 One-Line Setup (Recommended)
+
+```bash
+curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh | bash
+```
+
+### Option 1: Use as GitHub Template
+
+1. **Click "Use this template"** → Create your repository
+2. **Clone and start coding:**
+
+```bash
+git clone https://github.com/yourusername/your-new-repo.git
+cd your-new-repo
+claude                                # Start Claude Code
+/tdd "implement user authentication"  # Your first TDD feature!
+```
+
+### Option 2: Add to Existing Project
+
+```bash
+# Quick copy to existing project
+curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
+claude                 # Start Claude Code in your project
+/tdd "your first feature"
+```
+
+### Option 3: Manual Setup
+
+```bash
+# Download and run interactive setup
+curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
+chmod +x setup-claude-project.sh
+./setup-claude-project.sh
+```
+
+---
+
 ## What's This?
 
 A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 6 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
@@ -80,46 +122,6 @@ claude  # Start the interactive session
 - **Systematic development workflow**: Research → Plan → Test → Implement → Ship
 - **Complete command library** for streamlined development
 - **No-emoji policy** for clean, professional code
-
-## Quick Start
-
-**Prerequisites:** [Install Claude Code first](#getting-started-with-claude-code) if you haven't already.
-
-### 🚀 One-Line Setup (Recommended)
-
-```bash
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh | bash
-```
-
-### Option 1: Use as GitHub Template
-
-1. **Click "Use this template"** → Create your repository
-2. **Clone and start coding:**
-
-```bash
-git clone https://github.com/yourusername/your-new-repo.git
-cd your-new-repo
-claude                                # Start Claude Code
-/tdd "implement user authentication"  # Your first TDD feature!
-```
-
-### Option 2: Add to Existing Project
-
-```bash
-# Quick copy to existing project
-curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
-claude                 # Start Claude Code in your project
-/tdd "your first feature"
-```
-
-### Option 3: Manual Setup
-
-```bash
-# Download and run interactive setup
-curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
-chmod +x setup-claude-project.sh
-./setup-claude-project.sh
-```
 
 ## Commands Overview
 
