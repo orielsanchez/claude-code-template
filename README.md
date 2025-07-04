@@ -8,6 +8,70 @@ A complete development environment template that enforces **Test-Driven Developm
 
 **Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
 
+## New to Claude Code? Start Here!
+
+### What is Claude Code?
+
+**Claude Code** is an AI-powered command-line tool that revolutionizes software development by embedding Claude Opus 4 directly into your terminal. Unlike traditional AI coding assistants that just suggest code, Claude Code is **agentic** - meaning it can:
+
+- **Understand your entire codebase** without manual context selection
+- **Make coordinated changes** across multiple files
+- **Execute real actions** like running tests, creating commits, and fixing bugs
+- **Work directly in your terminal** with VS Code, JetBrains, and other IDEs
+
+### Why Agentic AI Development?
+
+Traditional AI tools require you to copy/paste code and explain context repeatedly. **Agentic AI development** means:
+
+✅ **Full codebase awareness** - Claude understands your project structure, patterns, and dependencies  
+✅ **Multi-file coordination** - Make complex changes across multiple files seamlessly  
+✅ **End-to-end workflows** - From writing tests to committing code, all in natural language  
+✅ **Learning preservation** - Build your skills while building your product
+
+### Quick Example
+
+Instead of this traditional workflow:
+```
+1. Read documentation 
+2. Write code manually
+3. Copy/paste to AI for review
+4. Manually fix issues
+5. Repeat...
+```
+
+You get this agentic workflow:
+```bash
+/tdd "user authentication with JWT tokens"
+# Claude writes tests, implements code, runs tests, fixes issues
+/check  # Validates quality automatically
+/ship "add JWT authentication system"  # Creates commit with docs
+```
+
+### Getting Started with Claude Code
+
+**First time?** Install Claude Code:
+```bash
+npm install -g @anthropic-ai/claude-code
+claude-code  # Start the interactive session
+```
+
+**Then use this template** (instructions below) to get systematic workflows and quality enforcement.
+
+**Learn more:** [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code) | [Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices)
+
+### Why Use This Template?
+
+**Raw Claude Code** is powerful but unstructured. **This template** provides:
+
+🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
+🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
+📚 **Learning-First Approach** - Build senior-level skills, not just working code  
+⚡ **6 Power Commands** - `/tdd`, `/check`, `/ship`, `/next`, `/prompt`, `/claude-md`  
+🔧 **Multi-Language Support** - Works with any tech stack  
+📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
+
+**Think of it as:** Claude Code + Engineering Discipline = Production-Ready Development
+
 ## Features
 
 - **Test-Driven Development (TDD)** workflow with AI assistance
@@ -18,6 +82,8 @@ A complete development environment template that enforces **Test-Driven Developm
 - **No-emoji policy** for clean, professional code
 
 ## Quick Start
+
+**Prerequisites:** [Install Claude Code first](#getting-started-with-claude-code) if you haven't already.
 
 ### 🚀 One-Line Setup (Recommended)
 
@@ -33,7 +99,8 @@ curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/mai
 ```bash
 git clone https://github.com/yourusername/your-new-repo.git
 cd your-new-repo
-/tdd "implement user authentication"  # Start with TDD!
+claude-code                           # Start Claude Code
+/tdd "implement user authentication"  # Your first TDD feature!
 ```
 
 ### Option 2: Add to Existing Project
@@ -41,6 +108,7 @@ cd your-new-repo
 ```bash
 # Quick copy to existing project
 curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
+claude-code            # Start Claude Code in your project
 /tdd "your first feature"
 ```
 
