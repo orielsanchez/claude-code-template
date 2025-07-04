@@ -33,7 +33,7 @@ cd your-new-repo
 
 ```bash
 # Download the template files
-curl -L https://github.com/yourusername/claude-code-template/archive/main.tar.gz | tar xz
+curl -L https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz
 cp -r claude-code-template-main/{CLAUDE.md,.claude} your-project/
 cd your-project
 
@@ -45,7 +45,7 @@ cd your-project
 
 ```bash
 # Download and run the interactive setup script
-curl -o setup-claude-project.sh https://raw.githubusercontent.com/yourusername/claude-code-template/main/setup-claude-project.sh
+curl -o setup-claude-project.sh https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
 chmod +x setup-claude-project.sh
 ./setup-claude-project.sh
 ```
