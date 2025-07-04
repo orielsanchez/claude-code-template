@@ -32,6 +32,74 @@ print_error() {
     echo -e "${RED}✗${NC} $1"
 }
 
+# Function to run enhanced auto-detection setup
+run_enhanced_setup() {
+    local project_dir="$1"
+    
+    # Check if Node.js and our detection system are available
+    if command -v node >/dev/null 2>&1 && [ -f "$DEFAULT_TEMPLATE_DIR/lib/framework-detector.js" ]; then
+        echo ""
+        print_status "🔍 Auto-detecting project framework..."
+        
+        # Create a simple Node.js script to run detection
+        cat > /tmp/detect-framework.js << 'EOF'
+const { enhancedSetup } = require(process.argv[2] + '/lib/framework-detector.js');
+const projectPath = process.argv[3];
+
+enhancedSetup(projectPath).then(result => {
+    if (result.success) {
+        console.log('SUCCESS');
+        console.log('Primary:', result.detected.primary);
+        console.log('Languages:', result.detected.languages.join(', '));
+        console.log('Frameworks:', result.detected.frameworks.join(', '));
+        console.log('Tools:', result.detected.tools.join(', '));
+        if (result.detected.testFrameworks.length > 0) {
+            console.log('Test Frameworks:', result.detected.testFrameworks.join(', '));
+        }
+        if (result.detected.bundlers.length > 0) {
+            console.log('Bundlers:', result.detected.bundlers.join(', '));
+        }
+    } else {
+        console.log('FALLBACK');
+        console.log('Error:', result.error);
+    }
+}).catch(err => {
+    console.log('FALLBACK');
+    console.log('Detection failed:', err.message);
+});
+EOF
+        
+        # Run the detection
+        local detection_output=$(node /tmp/detect-framework.js "$DEFAULT_TEMPLATE_DIR" "$project_dir" 2>/dev/null)
+        local detection_status=$(echo "$detection_output" | head -n 1)
+        
+        if [ "$detection_status" = "SUCCESS" ]; then
+            echo "$detection_output" | tail -n +2 | while IFS=': ' read -r key value; do
+                if [ -n "$value" ]; then
+                    print_status "$key: $value"
+                fi
+            done
+            
+            echo ""
+            print_status "✨ Enhanced setup complete! Framework-specific configuration applied."
+            print_status "📁 CLAUDE.md updated with detected framework standards"
+            print_status "🔧 Smart hooks configured for your tech stack"
+            
+            # Clean up
+            rm -f /tmp/detect-framework.js
+            return 0
+        else
+            print_warning "Auto-detection failed, falling back to manual setup"
+            echo "Reason: $(echo "$detection_output" | tail -n +2 | head -n 1)"
+            rm -f /tmp/detect-framework.js
+            return 1
+        fi
+    else
+        print_warning "Enhanced setup not available (Node.js required)"
+        return 1
+    fi
+}
+
 # Check if default template exists
 if [ ! -d "$DEFAULT_TEMPLATE_DIR" ]; then
     print_error "Default Claude setup not found at $DEFAULT_TEMPLATE_DIR"
@@ -43,7 +111,7 @@ fi
 echo ""
 echo "What would you like to do?"
 echo "1) Create new project with Claude setup"
-echo "2) Add Claude setup to existing project"
+echo "2) Add Claude setup to existing project (with auto-detection)"
 echo "3) Configure global git template (one-time setup)"
 echo "4) Install shell function for easy project creation"
 echo "5) All of the above (recommended for first run)"
@@ -92,7 +160,34 @@ case $setup_choice in
                 echo "Cancelled."
                 exit 0
             fi
-            project_type=4  # Treat as empty project
+            
+            # Try enhanced setup first
+            if run_enhanced_setup "$(pwd)"; then
+                # Enhanced setup succeeded
+                echo ""
+                print_status "Project '$project_name' ready with auto-detected configuration!"
+                echo ""
+                echo "Available Claude Code commands:"
+                echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
+                echo "  /debug    - Systematic debugging workflow"  
+                echo "  /refactor - Code improvement workflow"
+                echo "  /check    - Quality verification"
+                echo "  /ship     - Complete and commit changes"
+                echo "  /help     - Comprehensive help system"
+                echo ""
+                echo "Quick workflow:"
+                echo "  /dev \"feature\" → /check → /ship \"description\""
+                echo ""
+                
+                if [ "$setup_choice" != "5" ]; then
+                    exit 0
+                fi
+                return
+            else
+                echo ""
+                print_warning "Falling back to manual setup..."
+                project_type=4  # Treat as empty project for manual setup
+            fi
         fi
         
         # Initialize project based on type
@@ -209,15 +304,16 @@ venv/
         print_status "Project '$project_name' ready!"
         echo ""
         echo "Available Claude Code commands:"
+        echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
+        echo "  /debug    - Systematic debugging workflow"  
+        echo "  /refactor - Code improvement workflow"
         echo "  /check    - Quality verification"
-        echo "  /next     - Structured implementation"
-        echo "  /tdd      - Test-driven development"
         echo "  /ship     - Complete and commit changes"
-        echo "  /prompt   - LLM handoff (default) and help system"
+        echo "  /help     - Comprehensive help system"
         echo ""
         echo "Quick workflow:"
-        echo "  /tdd \"feature\" → /check → /ship \"description\""
-        echo "  /prompt (when context gets full)"
+        echo "  /dev \"feature\" → /check → /ship \"description\""
+        echo "  /help (for comprehensive guidance)"
         echo ""
         
         if [ "$setup_choice" != "5" ]; then
@@ -300,9 +396,12 @@ echo ""
 echo "Quick start:"
 echo "  1. Start new project: new-claude-project my-app"
 echo "  2. Or use git: git init (auto-includes Claude setup)"
-echo "  3. Begin development: /tdd \"implement feature\""
+echo "  3. Begin development: /dev \"implement feature\""
 echo "  4. Quality check: /check"
 echo "  5. Ship changes: /ship \"feature description\""
-echo "  6. Context handoff: /prompt (when context gets full)"
+echo "  6. Get help: /help (comprehensive guidance)"
 echo ""
-echo "For help: /prompt help workflow"
+echo "Enhanced features:"
+echo "  • Auto-detection configures projects automatically"
+echo "  • TDD-first development with /dev command"
+echo "  • Systematic workflows for debugging and refactoring"

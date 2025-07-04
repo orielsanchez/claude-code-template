@@ -21,7 +21,7 @@ curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/mai
 git clone https://github.com/yourusername/your-new-repo.git
 cd your-new-repo
 claude                                # Start Claude Code
-/tdd "implement user authentication"  # Your first TDD feature!
+/dev "implement user authentication"  # Your first TDD feature!
 ```
 
 ### Option 2: Add to Existing Project
@@ -30,23 +30,25 @@ claude                                # Start Claude Code
 # Quick copy to existing project
 curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
 claude                 # Start Claude Code in your project
-/tdd "your first feature"
+/dev "your first feature"
 ```
 
 ### Option 3: Manual Setup
 
 ```bash
-# Download and run interactive setup
-curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh
-chmod +x setup-claude-project.sh
-./setup-claude-project.sh
+# Download and run simplified setup
+curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-simple.sh
+chmod +x setup-simple.sh
+./setup-simple.sh my-project        # Create new project
+# OR
+./setup-simple.sh                   # Add to current directory
 ```
 
 ---
 
 ## What's This?
 
-A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 6 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
+A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 8 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
 
 **Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
 
@@ -83,8 +85,8 @@ Instead of this traditional workflow:
 
 You get this agentic workflow:
 ```bash
-/tdd "user authentication with JWT tokens"
-# Claude writes tests, implements code, runs tests, fixes issues
+/dev "user authentication with JWT tokens"
+# Claude writes tests first, implements code, runs tests, fixes issues
 /check  # Validates quality automatically
 /ship "add JWT authentication system"  # Creates commit with docs
 ```
@@ -108,7 +110,7 @@ claude  # Start the interactive session
 🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
 🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
 📚 **Learning-First Approach** - Build senior-level skills, not just working code  
-⚡ **6 Power Commands** - `/tdd`, `/check`, `/ship`, `/next`, `/prompt`, `/claude-md`  
+⚡ **8 Power Commands** - `/dev`, `/debug`, `/refactor`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
 🔧 **Multi-Language Support** - Works with any tech stack  
 📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
 
@@ -127,10 +129,12 @@ claude  # Start the interactive session
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| **`/tdd`** | Start with tests | `/tdd "user login"` |
+| **`/dev`** | TDD-first development | `/dev "user login"` |
+| **`/debug`** | Systematic debugging | `/debug "login fails"` |
+| **`/refactor`** | Code improvement | `/refactor "simplify auth"` |
 | **`/check`** | Quality gate | `/check` |
 | **`/ship`** | Commit & document | `/ship "add auth"` |
-| **`/next`** | Structured implementation | `/next "fix bug"` |
+| **`/help`** | Get help & guidance | `/help dev` |
 | **`/prompt`** | Context handoff | `/prompt` |
 | **`/claude-md`** | Update instructions | `/claude-md refresh` |
 
@@ -138,21 +142,36 @@ claude  # Start the interactive session
 
 **New Feature (TDD-first):**
 ```bash
-/tdd "user login"        # Write tests first
+/dev "user login"        # Write tests first, then implement
 /check                   # Ensure quality  
 /ship "add user login"   # Document & commit
 ```
 
-**Fix/Refactor:**
+**Bug Investigation & Fix:**
 ```bash
-/next "fix login bug"    # Structured approach
+/debug "login fails"     # Systematic debugging
 /check                   # Validate changes
 /ship "fix login issue"  # Commit changes
 ```
 
+**Code Improvement:**
+```bash
+/refactor "simplify login logic"  # Systematic refactoring
+/check                            # Validate changes
+/ship "improve code quality"      # Commit changes
+```
+
+**Feature Enhancement:**
+```bash
+/dev "improve login"     # TDD approach for enhancements
+/check                   # Validate changes
+/ship "enhance login"    # Commit changes
+```
+
 **Need Help?**
 ```bash
-/prompt help             # Get guidance
+/help                    # Get help overview
+/help dev                # Get help on TDD workflow
 /claude-md refresh       # Update instructions
 ```
 
@@ -167,12 +186,14 @@ Complete instruction file with:
 - **Mastery progression tracking** - Skill development from Novice → Expert
 
 ### `.claude/commands/`
-Six powerful commands for systematic development:
+Eight powerful commands for systematic development:
+- `dev.md` - TDD-first development workflow (primary command)
+- `debug.md` - Systematic debugging and root cause analysis
+- `refactor.md` - Systematic code refactoring and improvement workflows
 - `check.md` - Comprehensive quality verification
-- `next.md` - Structured implementation workflow
-- `tdd.md` - Complete TDD and test management
 - `ship.md` - Roadmap updates and commit workflow
-- `prompt.md` - Context handoff and help system
+- `help.md` - Interactive help and guidance system
+- `prompt.md` - Context handoff for LLM transitions
 - `claude-md.md` - Instruction file maintenance
 
 ### Configuration
@@ -226,6 +247,22 @@ If this template helps your development workflow, consider supporting its contin
 - 🐛 Report issues and suggest improvements
 - 📢 Share with your team and community
 - 🤝 Contribute improvements and documentation
+
+## Recent Updates
+
+**v1.2 - Modular Framework Detection** *(Latest)*
+- Refactored framework detection into specialized language detectors
+- Improved maintainability with single responsibility principle
+- Enhanced extensibility for adding new languages/frameworks
+- 62% reduction in main detection file complexity
+- Zero breaking changes, 100% test coverage preserved
+
+**v1.1 - Simplified Setup**
+- New `setup-simple.sh` script with streamlined 3-scenario workflow
+- Maintains full framework auto-detection capabilities
+- Backup system for existing Claude setups
+- Comprehensive TDD test coverage (17 new tests)
+- Cleaner user experience with better error handling
 
 ## Contributing
 
