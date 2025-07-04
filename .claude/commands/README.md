@@ -1,12 +1,13 @@
 # Claude Code Commands Reference
 
-**6 powerful commands for systematic development**
+**7 powerful commands for systematic development**
 
 ## Core Commands
 
 ### **Development & Quality**
 - **`/check`** - Comprehensive quality verification with zero tolerance for issues
 - **`/next <task>`** - Structured feature implementation with TDD integration
+- **`/debug <issue>`** - Systematic debugging workflow with root cause analysis
 
 ### **Test-Driven Development**
 - **`/tdd <feature|action>`** - Complete TDD workflow and test management
@@ -40,6 +41,13 @@ These commands embody our development philosophy:
 /tdd "implement user authentication"   # Full TDD cycle
 /check                                 # Quality verification  
 /ship "add JWT authentication"         # Update roadmap and commit
+```
+
+**Bug Investigation & Fix:**
+```bash
+/debug "user login fails with 500 error"  # Systematic debugging
+/check                                     # Quality verification
+/ship "fix authentication race condition" # Document and commit
 ```
 
 **Legacy Code Enhancement:**
