@@ -9,7 +9,7 @@
 ### 🚀 One-Line Setup (Recommended)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-claude-project.sh | bash
+curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-simple.sh | bash
 ```
 
 ### Option 1: Use as GitHub Template
