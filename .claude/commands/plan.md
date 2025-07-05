@@ -20,6 +20,13 @@ Generate comprehensive, phase-based roadmaps for any project or improvement init
 
 For complex project requirements, say: "Let me think deeply about this project requirements using systematic investigation."
 
+**CRITICAL: SAVE ROADMAP TO FILE**
+After generating the complete roadmap, you MUST save it to a markdown file:
+- **File naming**: Use format `ROADMAP-[PROJECT-NAME]-[DATE].md` (e.g., `ROADMAP-USER-EXPERIENCE-IMPROVEMENTS-2025-07-05.md`)
+- **Always save**: Every completed roadmap must be saved for future reference
+- **Location**: Save in the project root directory
+- **Content**: Include the complete formatted roadmap with all phases, deliverables, and implementation details
+
 ## Planning Methodology
 
 The systematic planning process analyzes requirements, identifies dependencies, and creates actionable roadmaps with clear phases and deliverables.
