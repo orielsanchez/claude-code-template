@@ -58,3 +58,6 @@ coverage/
 
 # Claude setup backups
 claude-backup-*/
+
+# Refactoring documentation
+REFACTOR_ROADMAP.md
