@@ -6,8 +6,8 @@
 
 set -e  # Exit on any error
 
-# Colors and visual elements (with color support detection)
-if [ -t 1 ] && [ "${TERM:-}" != "dumb" ] && [ "${NO_COLOR:-}" != "true" ]; then
+# Colors and visual elements (default to enabled, opt-out with NO_COLOR)
+if [ "${NO_COLOR:-}" != "true" ] && [ "${TERM:-}" != "dumb" ]; then
     RED='\033[0;31m'
     GREEN='\033[0;32m'
     BLUE='\033[0;34m'
@@ -38,10 +38,10 @@ progress_bar() {
     local empty=$((width - filled))
     
     if [ -n "$BLUE" ]; then
-        printf "\r\033[1;34m["
+        printf "\r${BLUE}["
         printf "%*s" $filled | tr ' ' '▓'
         printf "%*s" $empty | tr ' ' '░'
-        printf "] %d%% [%d/%d] ETA: %ds\033[0m" $percentage $current $total $((ESTIMATED_DURATION - ($(date +%s) - START_TIME)))
+        printf "] %d%% [%d/%d] ETA: %ds${NC}" $percentage $current $total $((ESTIMATED_DURATION - ($(date +%s) - START_TIME)))
     else
         printf "\r["
         printf "%*s" $filled | tr ' ' '#'
@@ -401,9 +401,9 @@ echo "  /dev \"feature\" → /check → /ship \"description\""
 echo ""
 
 echo -e "${BLUE}🚀 Next Steps:${NC}"
-echo "  1. Start Claude Code with: ${GREEN}claude${NC}"
-echo "  2. Try your first TDD feature: ${GREEN}/dev \"user authentication\"${NC}"
-echo "  3. Get help anytime with: ${GREEN}/help${NC}"
+echo -e "  1. Start Claude Code with: ${GREEN}claude${NC}"
+echo -e "  2. Try your first TDD feature: ${GREEN}/dev \"user authentication\"${NC}"
+echo -e "  3. Get help anytime with: ${GREEN}/help${NC}"
 echo ""
 
 print_info "Setup completed successfully! Your development environment is ready."
