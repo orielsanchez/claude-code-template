@@ -46,7 +46,7 @@ chmod +x setup.sh
 
 ## What's This?
 
-A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 8 powerful commands, automated quality checks, and learning protocols to build senior-level development skills.
+A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 9 powerful commands, automated quality checks, strategic planning capabilities, and learning protocols to build senior-level development skills.
 
 **Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
 
@@ -108,7 +108,7 @@ claude  # Start the interactive session
 🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
 🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
 📚 **Learning-First Approach** - Build senior-level skills, not just working code  
-⚡ **8 Power Commands** - `/dev`, `/debug`, `/refactor`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
+⚡ **9 Power Commands** - `/dev`, `/debug`, `/refactor`, `/plan`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
 🔧 **Multi-Language Support** - Works with any tech stack  
 📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
 
@@ -130,6 +130,7 @@ claude  # Start the interactive session
 | **`/dev`** | TDD-first development | `/dev "user login"` |
 | **`/debug`** | Systematic debugging | `/debug "login fails"` |
 | **`/refactor`** | Code improvement | `/refactor "simplify auth"` |
+| **`/plan`** | Strategic roadmap generation | `/plan "improve auth system"` |
 | **`/check`** | Quality gate | `/check` |
 | **`/ship`** | Commit & document | `/ship "add auth"` |
 | **`/help`** | Get help & guidance | `/help dev` |
@@ -137,6 +138,14 @@ claude  # Start the interactive session
 | **`/claude-md`** | Update instructions | `/claude-md refresh` |
 
 ## Typical Workflow
+
+**Strategic Planning & Implementation:**
+```bash
+/plan "implement user authentication system"  # Generate comprehensive roadmap
+/dev "user login"                            # Implement following the plan (TDD)
+/check                                       # Ensure quality  
+/ship "add user login system"                # Document & commit
+```
 
 **New Feature (TDD-first):**
 ```bash
@@ -236,7 +245,17 @@ If this template helps your development workflow, consider supporting its contin
 
 ## Recent Updates
 
-**v1.6 - Command Documentation Modularization** *(Latest)*
+**v1.7 - Strategic Planning Command** *(Latest)*
+- **NEW**: `/plan` command for comprehensive roadmap generation
+- Generate phase-based roadmaps for any project or improvement initiative  
+- 5-phase methodology: Discovery → Design → Planning → Implementation → Resources
+- Enhanced phase generator supporting rich planning structures (key actions, deliverables)
+- LLM-followable roadmaps with clear dependencies and success criteria
+- Integration with existing command ecosystem (/dev, /refactor, /check workflows)
+- Planning-specific templates for methodology and execution guidance
+- Backward compatible with all existing functionality (73/73 tests passing)
+
+**v1.6 - Command Documentation Modularization**
 - **COMPLETED**: Full command documentation modularization system implementation
 - Created comprehensive lib/command-utils/ architecture with modular templates and generators
 - **ALL 7 commands** successfully migrated to modular structure
