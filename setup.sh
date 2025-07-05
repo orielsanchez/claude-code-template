@@ -73,7 +73,7 @@ if ! curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-templat
 fi
 
 # Download all command files
-commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md")
+commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan")
 for cmd in "${commands[@]}"; do
     if ! curl -sL "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" > ".claude/commands/${cmd}.md"; then
         print_error "Failed to download ${cmd}.md"
@@ -177,6 +177,7 @@ echo "  /debug    - Systematic debugging workflow"
 echo "  /refactor - Code improvement workflow"
 echo "  /check    - Quality verification"
 echo "  /ship     - Complete and commit changes"
+echo "  /plan     - Strategic planning & roadmap generation"
 echo "  /help     - Comprehensive help system"
 echo ""
 echo "Quick workflow:"
