@@ -27,10 +27,19 @@ print_warning() {
 echo -e "${BLUE}🚀 Claude Code Standalone Setup${NC}"
 echo "========================================="
 
+# Check if git is installed
+if ! command -v git >/dev/null 2>&1; then
+    print_error "Git is not installed. Please install git first."
+    exit 1
+fi
+
 # Check if we're in a git repository, initialize if needed
 if [ ! -d ".git" ]; then
     print_status "Initializing git repository..."
-    git init
+    if ! git init; then
+        print_error "Failed to initialize git repository"
+        exit 1
+    fi
 fi
 
 # Detect if Claude setup already exists
@@ -58,16 +67,25 @@ print_status "Downloading Claude Code template files..."
 mkdir -p .claude/{commands,hooks}
 
 # Download CLAUDE.md
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/CLAUDE.md > CLAUDE.md
+if ! curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/CLAUDE.md > CLAUDE.md; then
+    print_error "Failed to download CLAUDE.md"
+    exit 1
+fi
 
 # Download all command files
 commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md")
 for cmd in "${commands[@]}"; do
-    curl -sL "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" > ".claude/commands/${cmd}.md"
+    if ! curl -sL "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" > ".claude/commands/${cmd}.md"; then
+        print_error "Failed to download ${cmd}.md"
+        exit 1
+    fi
 done
 
 # Download settings
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/settings.local.json > .claude/settings.local.json
+if ! curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/settings.local.json > .claude/settings.local.json; then
+    print_error "Failed to download settings.local.json"
+    exit 1
+fi
 
 # Create basic smart-lint.sh hook
 cat > .claude/hooks/smart-lint.sh << 'EOF'
