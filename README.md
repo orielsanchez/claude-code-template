@@ -218,20 +218,8 @@ The setup script supports multiple project types:
 
 ## Advanced Setup
 
-### Global Git Template
-Configure automatic Claude setup for all new repositories:
-```bash
-./setup-claude-project.sh
-# Choose option 3: Configure global git template
-```
-
-### Shell Function
-Add project creation function to your shell:
-```bash
-./setup-claude-project.sh
-# Choose option 4: Install shell function
-# Then use: new-claude-project my-awesome-app
-```
+### Advanced Usage
+The setup script automatically handles project initialization and can be run multiple times to update your Claude setup.
 
 ## Support This Project
 
