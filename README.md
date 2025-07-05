@@ -2,17 +2,34 @@
 
 **Professional development setup with Claude Code integration for systematic, high-quality software development.**
 
+## Summary
+
+**Quick Start**: Get systematic TDD workflows with Claude Code in 30 seconds. One command sets up quality-first development with 9 power commands, automated testing, and learning protocols.
+
+**Perfect for**: Teams wanting consistent, production-ready AI-assisted development.
+
+**Ready to start?** → [Quick Start](#quick-start) • **New to Claude Code?** → [What is Claude Code?](#what-is-claude-code)
+
+---
+
 ## Quick Start
 
 **Prerequisites:** Install Claude Code: `npm install -g @anthropic-ai/claude-code`
 
-### 🚀 One-Line Setup (Recommended)
+### 🚀 One-Line Setup (Recommended - 30 seconds)
 
 ```bash
 curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
 ```
 
-### Option 1: Use as GitHub Template
+**✅ Success**: You'll see "Setup complete!" and can start with `claude` then `/dev "your first feature"`
+
+### Alternative Setup Options
+
+<details>
+<summary>📋 Other setup methods (click to expand)</summary>
+
+#### GitHub Template Method
 
 1. **Click "Use this template"** → Create your repository
 2. **Clone and start coding:**
@@ -24,7 +41,7 @@ claude                                # Start Claude Code
 /dev "implement user authentication"  # Your first TDD feature!
 ```
 
-### Option 2: Add to Existing Project
+#### Add to Existing Project
 
 ```bash
 # Quick copy to existing project
@@ -33,26 +50,11 @@ claude                 # Start Claude Code in your project
 /dev "your first feature"
 ```
 
-### Option 3: Manual Setup
-
-```bash
-# Download and run setup
-curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh
-chmod +x setup.sh
-./setup.sh                          # Add to current directory
-```
+</details>
 
 ---
 
-## What's This?
-
-A complete development environment template that enforces **Test-Driven Development**, **quality-first coding**, and **systematic workflows** when working with Claude Code. Includes 9 powerful commands, automated quality checks, strategic planning capabilities, and learning protocols to build senior-level development skills.
-
-**Perfect for:** Teams wanting consistent, high-quality AI-assisted development.
-
-## New to Claude Code? Start Here!
-
-### What is Claude Code?
+## What is Claude Code?
 
 **Claude Code** is an AI-powered command-line tool that revolutionizes software development by embedding Claude Opus 4 directly into your terminal. Unlike traditional AI coding assistants that just suggest code, Claude Code is **agentic** - meaning it can:
 
@@ -89,39 +91,9 @@ You get this agentic workflow:
 /ship "add JWT authentication system"  # Creates commit with docs
 ```
 
-### Getting Started with Claude Code
-
-**First time?** Install Claude Code:
-```bash
-npm install -g @anthropic-ai/claude-code
-claude  # Start the interactive session
-```
-
-**Then use this template** (instructions below) to get systematic workflows and quality enforcement.
-
 **Learn more:** [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code) | [Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices)
 
-### Why Use This Template?
-
-**Raw Claude Code** is powerful but unstructured. **This template** provides:
-
-🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
-🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
-📚 **Learning-First Approach** - Build senior-level skills, not just working code  
-⚡ **9 Power Commands** - `/dev`, `/debug`, `/refactor`, `/plan`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
-🔧 **Multi-Language Support** - Works with any tech stack  
-📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
-
-**Think of it as:** Claude Code + Engineering Discipline = Production-Ready Development
-
-## Features
-
-- **Test-Driven Development (TDD)** workflow with AI assistance
-- **Quality-first approach** with automated checks and zero-tolerance policies
-- **Learning-preservation protocols** to build senior-level skills
-- **Systematic development workflow**: Research → Plan → Test → Implement → Ship
-- **Complete command library** for streamlined development
-- **No-emoji policy** for clean, professional code
+---
 
 ## Commands Overview
 
@@ -139,14 +111,6 @@ claude  # Start the interactive session
 
 ## Typical Workflow
 
-**Strategic Planning & Implementation:**
-```bash
-/plan "implement user authentication system"  # Generate comprehensive roadmap
-/dev "user login"                            # Implement following the plan (TDD)
-/check                                       # Ensure quality  
-/ship "add user login system"                # Document & commit
-```
-
 **New Feature (TDD-first):**
 ```bash
 /dev "user login"        # Write tests first, then implement
@@ -161,28 +125,59 @@ claude  # Start the interactive session
 /ship "fix login issue"  # Commit changes
 ```
 
-**Code Improvement:**
-```bash
-/refactor "simplify login logic"  # Systematic refactoring
-/check                            # Validate changes
-/ship "improve code quality"      # Commit changes
-```
-
-**Feature Enhancement:**
-```bash
-/dev "improve login"     # TDD approach for enhancements
-/check                   # Validate changes
-/ship "enhance login"    # Commit changes
-```
-
 **Need Help?**
 ```bash
 /help                    # Get help overview
 /help dev                # Get help on TDD workflow
-/claude-md refresh       # Update instructions
 ```
 
-## What's Included
+---
+
+## Features & Philosophy
+
+<details>
+<summary>📖 Detailed Features (click to expand)</summary>
+
+### Why Use This Template?
+
+**Raw Claude Code** is powerful but unstructured. **This template** provides:
+
+🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
+🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
+📚 **Learning-First Approach** - Build senior-level skills, not just working code  
+⚡ **9 Power Commands** - `/dev`, `/debug`, `/refactor`, `/plan`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
+🔧 **Multi-Language Support** - Works with any tech stack  
+📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
+
+**Think of it as:** Claude Code + Engineering Discipline = Production-Ready Development
+
+### Core Features
+
+- **Test-Driven Development (TDD)** workflow with AI assistance
+- **Quality-first approach** with automated checks and zero-tolerance policies
+- **Learning-preservation protocols** to build senior-level skills
+- **Systematic development workflow**: Research → Plan → Test → Implement → Ship
+- **Complete command library** for streamlined development
+- **No-emoji policy** for clean, professional code
+
+### Philosophy
+
+This template embodies a **learning-first, quality-first development approach**:
+
+1. **Test-Driven Development** - Write tests first, let AI satisfy contracts
+2. **Systematic Workflow** - Research → Plan → Test → Implement → Ship
+3. **Knowledge Preservation** - Build understanding, not just working code
+4. **Zero Tolerance Quality** - No shortcuts, no compromises
+5. **Continuous Learning** - Track mastery progression and skill development
+
+</details>
+
+---
+
+## Advanced Usage & Configuration
+
+<details>
+<summary>🔧 What's Included & Advanced Setup (click to expand)</summary>
 
 ### `CLAUDE.md`
 Complete instruction file with:
@@ -207,17 +202,7 @@ Eight powerful commands for systematic development:
 - `.claude/hooks/` - Quality enforcement hooks
 - `.claude/settings.local.json` - Local Claude Code settings
 
-## Philosophy
-
-This template embodies a **learning-first, quality-first development approach**:
-
-1. **Test-Driven Development** - Write tests first, let AI satisfy contracts
-2. **Systematic Workflow** - Research → Plan → Test → Implement → Ship
-3. **Knowledge Preservation** - Build understanding, not just working code
-4. **Zero Tolerance Quality** - No shortcuts, no compromises
-5. **Continuous Learning** - Track mastery progression and skill development
-
-## Project Types Supported
+### Project Types Supported
 
 The setup script supports multiple project types:
 - **Rust** - `cargo init` with proper project structure
@@ -225,25 +210,48 @@ The setup script supports multiple project types:
 - **Python** - Virtual environment and project scaffolding
 - **Universal** - Works with any language or framework
 
-## Advanced Setup
-
 ### Advanced Usage
 The setup script automatically handles project initialization and can be run multiple times to update your Claude setup.
 
-## Support This Project
+</details>
 
-If this template helps your development workflow, consider supporting its continued development:
+---
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-pink?logo=github)](https://github.com/sponsors/orielsanchez)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/orielsanchez)
+## Strategic Planning & Complex Workflows
 
-**Other ways to support:**
-- ⭐ Star this repository
-- 🐛 Report issues and suggest improvements
-- 📢 Share with your team and community
-- 🤝 Contribute improvements and documentation
+<details>
+<summary>🗺️ Strategic Planning & Implementation (click to expand)</summary>
+
+**Strategic Planning & Implementation:**
+```bash
+/plan "implement user authentication system"  # Generate comprehensive roadmap
+/dev "user login"                            # Implement following the plan (TDD)
+/check                                       # Ensure quality  
+/ship "add user login system"                # Document & commit
+```
+
+**Code Improvement:**
+```bash
+/refactor "simplify login logic"  # Systematic refactoring
+/check                            # Validate changes
+/ship "improve code quality"      # Commit changes
+```
+
+**Feature Enhancement:**
+```bash
+/dev "improve login"     # TDD approach for enhancements
+/check                   # Validate changes
+/ship "enhance login"    # Commit changes
+```
+
+</details>
+
+---
 
 ## Recent Updates
+
+<details>
+<summary>📅 Version History (click to expand)</summary>
 
 **v1.7 - Strategic Planning Command** *(Latest)*
 - **NEW**: `/plan` command for comprehensive roadmap generation
@@ -302,13 +310,37 @@ If this template helps your development workflow, consider supporting its contin
 - Comprehensive TDD test coverage (17 new tests)
 - Cleaner user experience with better error handling
 
-## Contributing
+</details>
+
+---
+
+## Support & Contributing
+
+<details>
+<summary>🤝 Support This Project (click to expand)</summary>
+
+If this template helps your development workflow, consider supporting its continued development:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-pink?logo=github)](https://github.com/sponsors/orielsanchez)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/orielsanchez)
+
+**Other ways to support:**
+- ⭐ Star this repository
+- 🐛 Report issues and suggest improvements
+- 📢 Share with your team and community
+- 🤝 Contribute improvements and documentation
+
+### Contributing
 
 This template represents battle-tested practices for AI-assisted development. Contributions should:
 - Maintain the learning-first philosophy
 - Preserve systematic workflow patterns
 - Include comprehensive testing
 - Follow the established quality standards
+
+</details>
+
+---
 
 ## License
 
