@@ -6,12 +6,21 @@
 
 set -e  # Exit on any error
 
-# Colors and visual elements
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Colors and visual elements (with color support detection)
+if [ -t 1 ] && [ "${TERM:-}" != "dumb" ] && [ "${NO_COLOR:-}" != "true" ]; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    BLUE='\033[0;34m'
+    YELLOW='\033[1;33m'
+    NC='\033[0m' # No Color
+else
+    # No color support
+    RED=''
+    GREEN=''
+    BLUE=''
+    YELLOW=''
+    NC=''
+fi
 
 # Setup configuration
 TOTAL_STEPS=8
@@ -28,10 +37,17 @@ progress_bar() {
     local filled=$((current * width / total))
     local empty=$((width - filled))
     
-    printf "\r[1;34m["
-    printf "%*s" $filled | tr ' ' '▓'
-    printf "%*s" $empty | tr ' ' '░'
-    printf "] %d%% [%d/%d] ETA: %ds[0m" $percentage $current $total $((ESTIMATED_DURATION - ($(date +%s) - START_TIME)))
+    if [ -n "$BLUE" ]; then
+        printf "\r\033[1;34m["
+        printf "%*s" $filled | tr ' ' '▓'
+        printf "%*s" $empty | tr ' ' '░'
+        printf "] %d%% [%d/%d] ETA: %ds\033[0m" $percentage $current $total $((ESTIMATED_DURATION - ($(date +%s) - START_TIME)))
+    else
+        printf "\r["
+        printf "%*s" $filled | tr ' ' '#'
+        printf "%*s" $empty | tr ' ' '-'
+        printf "] %d%% [%d/%d] ETA: %ds" $percentage $current $total $((ESTIMATED_DURATION - ($(date +%s) - START_TIME)))
+    fi
     # Progress pattern examples: [1/8] [2/8] [3/8] etc.
 }
 
