@@ -352,6 +352,53 @@ exit 0
 EOF
 
 chmod +x .claude/hooks/smart-lint.sh
+
+# Create commit-msg hook for Claude attribution enforcement
+if [ -d ".git" ]; then
+    mkdir -p .git/hooks
+    cat > .git/hooks/commit-msg << 'EOF'
+#!/usr/bin/env bash
+# commit-msg - Validate commit messages for forbidden patterns
+#
+# This hook enforces the UNIVERSAL FORBIDDEN PATTERNS from CLAUDE.md
+# specifically checking for Claude attribution in commit messages.
+
+commit_msg_file="$1"
+
+# Read the commit message
+commit_msg=$(cat "$commit_msg_file")
+
+# Check for forbidden Claude attribution patterns
+if echo "$commit_msg" | grep -qiE "(generated with.*claude|co-authored-by.*claude)"; then
+    echo "ERROR: Commit message contains forbidden Claude attribution"
+    echo "FORBIDDEN PATTERN: Claude attribution in commit messages is not allowed"
+    echo ""
+    echo "Remove any of these patterns:"
+    echo "  - 'Generated with Claude Code'"
+    echo "  - 'Co-Authored-By: Claude'"
+    echo "  - Similar Claude attribution text"
+    echo ""
+    echo "See CLAUDE.md UNIVERSAL FORBIDDEN PATTERNS for details."
+    exit 1
+fi
+
+# Check for emojis in commit messages (basic pattern matching)
+if echo "$commit_msg" | grep -qE '[😀-🿿]|[🀀-🯿]'; then
+    echo "ERROR: Commit message contains emojis"
+    echo "FORBIDDEN PATTERN: No emojis allowed in commit messages"
+    echo ""
+    echo "See CLAUDE.md UNIVERSAL FORBIDDEN PATTERNS for details."
+    exit 1
+fi
+
+exit 0
+EOF
+    chmod +x .git/hooks/commit-msg
+    print_status "Git commit-msg hook installed (enforces professional standards)"
+else
+    print_warning "Not a git repository - commit-msg hook will be installed when git init is run"
+fi
+
 print_status "Quality hooks configured"
 
 # Step 8: Final configuration
@@ -382,6 +429,9 @@ echo -e "${BLUE}📋 Installation Summary:${NC}"
 echo "  ✓ Downloaded 1 configuration file (CLAUDE.md)"
 echo "  ✓ Downloaded $total_commands command files"
 echo "  ✓ Configured 1 quality hook (smart-lint.sh)"
+if [ -d ".git" ]; then
+    echo "  ✓ Installed git commit-msg hook (Claude attribution enforcement)"
+fi
 echo "  ✓ Created .claude directory structure"
 echo "  ✓ Updated .gitignore"
 echo ""
@@ -391,7 +441,8 @@ echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
 echo "  /debug    - Systematic debugging workflow"  
 echo "  /refactor - Code improvement workflow"
 echo "  /check    - Quality verification"
-echo "  /ship     - Complete and commit changes"
+echo "  /ship     - Complete and commit changes (NO Claude attribution)"
+echo "  /prompt   - Generate LLM handoff prompts"
 echo "  /plan     - Strategic planning & roadmap generation"
 echo "  /help     - Comprehensive help system"
 echo ""
@@ -405,5 +456,13 @@ echo -e "  1. Start Claude Code with: ${GREEN}claude${NC}"
 echo -e "  2. Try your first TDD feature: ${GREEN}/dev \"user authentication\"${NC}"
 echo -e "  3. Get help anytime with: ${GREEN}/help${NC}"
 echo ""
+
+if [ -d ".git" ]; then
+    echo -e "${YELLOW}⚡ Professional Standards Enforced:${NC}"
+    echo "  • Git hooks prevent Claude attribution in commit messages"
+    echo "  • No emojis allowed in commits (professional standards)"  
+    echo "  • Clean commit history automatically maintained"
+    echo ""
+fi
 
 print_info "Setup completed successfully! Your development environment is ready."
