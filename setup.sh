@@ -27,10 +27,10 @@ print_warning() {
 echo -e "${BLUE}🚀 Claude Code Standalone Setup${NC}"
 echo "========================================="
 
-# Check if we're in a git repository
+# Check if we're in a git repository, initialize if needed
 if [ ! -d ".git" ]; then
-    print_error "Not in a git repository. Please run 'git init' first."
-    exit 1
+    print_status "Initializing git repository..."
+    git init
 fi
 
 # Detect if Claude setup already exists
