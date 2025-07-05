@@ -186,10 +186,19 @@ if [ -f "CLAUDE.md" ] || [ -d ".claude" ]; then
     print_warning "Claude setup already exists in this directory"
     print_info "This script will update the existing setup safely"
     echo ""
-    read -p "Continue with update? (y/N): " confirm
-    if [[ ! $confirm =~ ^[Yy]$ ]]; then
-        print_info "Setup cancelled by user"
-        exit 0
+    
+    # Check if running in interactive mode (TTY available)
+    if [ -t 0 ]; then
+        # Interactive mode - prompt user
+        read -p "Continue with update? (y/N): " confirm
+        if [[ ! $confirm =~ ^[Yy]$ ]]; then
+            print_info "Setup cancelled by user"
+            exit 0
+        fi
+    else
+        # Non-interactive mode (pipe execution) - proceed with safe default
+        print_info "Running in non-interactive mode - proceeding with update"
+        confirm="y"
     fi
     
     # Create backup with timestamp
