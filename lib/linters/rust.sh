@@ -40,9 +40,17 @@ lint_rust() {
     
     local has_errors=0
     
-    # Rustfmt formatting
-    if check_tool_available "rustfmt"; then
-        log_debug "Checking Rust formatting with rustfmt"
+    # Modern Rust 2024 formatting check
+    if check_tool_available "cargo" && [[ -f "Cargo.toml" ]]; then
+        log_debug "Checking Rust formatting with cargo fmt (2024 style edition)"
+        if ! cargo fmt -- --check &>/dev/null; then
+            log_error "Rust files need formatting (run: cargo fmt)"
+            has_errors=1
+        else
+            log_success "Rust formatting is correct (2024 style edition)"
+        fi
+    elif check_tool_available "rustfmt"; then
+        log_debug "Checking Rust formatting with rustfmt (fallback)"
         if ! rustfmt --check $rust_files &>/dev/null; then
             log_error "Rust files need formatting (run: rustfmt $rust_files)"
             has_errors=1
@@ -53,30 +61,52 @@ lint_rust() {
         log_debug "rustfmt not available, skipping Rust formatting check"
     fi
     
-    # Clippy linting
+    # Modern comprehensive Clippy linting (2024+ standards)
     if check_tool_available "cargo" && [[ -f "Cargo.toml" ]]; then
         if check_tool_available "cargo-clippy" || cargo clippy --version &>/dev/null; then
-            log_debug "Running Rust linting with clippy"
-            if ! cargo clippy -- -D warnings &>/dev/null; then
-                log_error "Rust clippy found issues (run: cargo clippy)"
+            log_debug "Running comprehensive Rust linting with clippy (all + pedantic)"
+            if ! cargo clippy --all-targets --all-features -- -D warnings -D clippy::all -D clippy::pedantic &>/dev/null; then
+                log_error "Rust clippy found issues (run: cargo clippy --all-targets --all-features -- -D warnings)"
                 has_errors=1
             else
-                log_success "Rust clippy passed"
+                log_success "Rust clippy passed (all + pedantic lints)"
             fi
         else
             log_debug "clippy not available, skipping Rust linting"
         fi
         
-        # Cargo check
-        log_debug "Running cargo check"
-        if ! cargo check &>/dev/null; then
-            log_error "Rust compilation check failed (run: cargo check)"
+        # Comprehensive cargo check with all targets and features
+        log_debug "Running comprehensive cargo check (all targets + features)"
+        if ! cargo check --all-targets --all-features &>/dev/null; then
+            log_error "Rust compilation check failed (run: cargo check --all-targets --all-features)"
             has_errors=1
         else
-            log_success "Rust compilation check passed"
+            log_success "Rust compilation check passed (all targets + features)"
+        fi
+        
+        # Security audit check (if cargo-audit is available)
+        if check_tool_available "cargo-audit" || cargo audit --version &>/dev/null; then
+            log_debug "Running security audit with cargo-audit"
+            if ! cargo audit &>/dev/null; then
+                log_error "Security vulnerabilities found (run: cargo audit)"
+                has_errors=1
+            else
+                log_success "Security audit passed (no known vulnerabilities)"
+            fi
+        else
+            log_debug "cargo-audit not available, skipping security check"
+        fi
+        
+        # Test compilation check
+        log_debug "Checking test compilation"
+        if ! cargo test --all-features --no-run &>/dev/null; then
+            log_error "Test compilation failed (run: cargo test --all-features --no-run)"
+            has_errors=1
+        else
+            log_success "Test compilation passed"
         fi
     else
-        log_debug "cargo not available or no Cargo.toml, skipping Rust checks"
+        log_debug "cargo not available or no Cargo.toml, skipping comprehensive Rust checks"
     fi
     
     time_end "$start_time"
