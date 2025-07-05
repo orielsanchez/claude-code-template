@@ -55,3 +55,6 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Claude setup backups
+claude-backup-*/

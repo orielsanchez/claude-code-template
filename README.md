@@ -9,7 +9,7 @@
 ### 🚀 One-Line Setup (Recommended)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-simple.sh | bash
+curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
 ```
 
 ### Option 1: Use as GitHub Template
@@ -36,12 +36,10 @@ claude                 # Start Claude Code in your project
 ### Option 3: Manual Setup
 
 ```bash
-# Download and run simplified setup
-curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup-simple.sh
-chmod +x setup-simple.sh
-./setup-simple.sh my-project        # Create new project
-# OR
-./setup-simple.sh                   # Add to current directory
+# Download and run setup
+curl -O https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh
+chmod +x setup.sh
+./setup.sh                          # Add to current directory
 ```
 
 ---
