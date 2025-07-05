@@ -167,6 +167,7 @@ Your code must be 100% clean. No exceptions.
 ### UNIVERSAL FORBIDDEN PATTERNS:
 
 - **NO emojis** in code, comments, documentation, commit messages, or any project files
+- **NO Claude attribution** in commit messages ("Generated with Claude Code", "Co-Authored-By: Claude", etc.)
 - **NO** keeping old and new code together - delete when replacing
 - **NO** migration functions or compatibility layers
 - **NO** versioned function names (processV2, handleNew, etc.)
