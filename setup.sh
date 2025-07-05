@@ -369,7 +369,7 @@ commit_msg_file="$1"
 commit_msg=$(cat "$commit_msg_file")
 
 # Check for forbidden Claude attribution patterns
-if echo "$commit_msg" | grep -qiE "(generated with.*claude|co-authored-by.*claude)"; then
+if grep -qiE "(generated with.*claude|co-authored-by.*claude)" "$commit_msg_file"; then
     echo "ERROR: Commit message contains forbidden Claude attribution"
     echo "FORBIDDEN PATTERN: Claude attribution in commit messages is not allowed"
     echo ""
@@ -383,7 +383,7 @@ if echo "$commit_msg" | grep -qiE "(generated with.*claude|co-authored-by.*claud
 fi
 
 # Check for emojis in commit messages (basic pattern matching)
-if echo "$commit_msg" | grep -qE '[😀-🿿]|[🀀-🯿]'; then
+if grep -qE '[😀-🿿]|[🀀-🯿]' "$commit_msg_file"; then
     echo "ERROR: Commit message contains emojis"
     echo "FORBIDDEN PATTERN: No emojis allowed in commit messages"
     echo ""
