@@ -426,13 +426,13 @@ describe('Phase 3: Architecture Modernization', () => {
         });
       }
 
-      // Error should be logged through ConfigurationManager
-      const errorLogs = configManager.getErrorLogs();
+      // Error should be logged through BaseManager
+      const errorLogs = manager.getErrorLogs();
       expect(errorLogs.length).toBeGreaterThan(0);
       expect(errorLogs[0]).toMatchObject({
         timestamp: expect.any(String),
-        plugin: 'accessibility',
-        error: expect.any(String)
+        error: expect.any(String),
+        context: expect.any(Object)
       });
     });
 

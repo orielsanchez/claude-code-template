@@ -132,12 +132,11 @@ describe('Phase 1: UX Research & Baseline Systems', () => {
         description: 'test pain point'
       });
 
-      collector.saveData();
+      const savedPath = collector.saveData();
+      expect(savedPath).toBeDefined();
+      expect(fs.existsSync(savedPath)).toBe(true);
 
-      const dataPath = path.join(__dirname, '../data/ux-research/research-data.json');
-      expect(fs.existsSync(dataPath)).toBe(true);
-
-      const savedData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      const savedData = JSON.parse(fs.readFileSync(savedPath, 'utf8'));
       expect(savedData).toHaveProperty('painPoints');
       expect(savedData.painPoints).toHaveLength(1);
     });
