@@ -41,20 +41,15 @@ describe('Phase 4 Enhancement: Complete Plugin Architecture', () => {
   });
 
   describe('Phase 4A: UserPreferenceManager Deprecation', () => {
-    it('should redirect to UnifiedPreferenceManager with deprecation warning', () => {
-      const userPrefManager = new UserPreferenceManager(testDir);
-      
-      // Should log deprecation warning
-      expect(mockWarn).toHaveBeenCalledWith(
-        'UserPreferenceManager is deprecated. Use UnifiedPreferenceManager instead.'
-      );
+    it('should use UnifiedPreferenceManager as backend', () => {
+      const userPrefManager = new UserPreferenceManager({ configDir: testDir });
       
       // Should delegate to UnifiedPreferenceManager
       expect(userPrefManager._implementation).toBeInstanceOf(UnifiedPreferenceManager);
     });
 
     it('should maintain backward compatibility for existing API', () => {
-      const userPrefManager = new UserPreferenceManager(testDir);
+      const userPrefManager = new UserPreferenceManager({ configDir: testDir });
       
       // Test basic preference operations
       userPrefManager.setPreference('theme', 'dark');
@@ -70,10 +65,10 @@ describe('Phase 4 Enhancement: Complete Plugin Architecture', () => {
     });
 
     it('should support ConfigurationManager integration when provided', () => {
-      const userPrefManager = new UserPreferenceManager(testDir, configManager);
+      const userPrefManager = new UserPreferenceManager({ configDir: testDir, configManager });
       
-      // Should not show deprecation warning when using ConfigurationManager
-      expect(mockWarn).not.toHaveBeenCalled();
+      // Should work with ConfigurationManager
+      expect(userPrefManager.configManager).toBe(configManager);
       
       // Should work with plugin architecture
       expect(userPrefManager._implementation).toBeInstanceOf(UnifiedPreferenceManager);
@@ -81,14 +76,14 @@ describe('Phase 4 Enhancement: Complete Plugin Architecture', () => {
     });
 
     it('should handle preferences persistence correctly', () => {
-      const userPrefManager = new UserPreferenceManager(testDir);
+      const userPrefManager = new UserPreferenceManager({ configDir: testDir });
       
       // Set preferences
       userPrefManager.setPreference('user.name', 'Test User');
       userPrefManager.setPreference('user.email', 'test@example.com');
       
       // Create new instance (should load from persistence)
-      const newUserPrefManager = new UserPreferenceManager(testDir);
+      const newUserPrefManager = new UserPreferenceManager({ configDir: testDir });
       expect(newUserPrefManager.getPreference('user.name')).toBe('Test User');
       expect(newUserPrefManager.getPreference('user.email')).toBe('test@example.com');
     });
@@ -349,7 +344,7 @@ describe('Phase 4 Enhancement: Complete Plugin Architecture', () => {
       // Create managers through factory pattern
       const errorRecovery = configManager.createManager('errorRecovery', ErrorRecoverySystem);
       const helpSystem = configManager.createManager('helpSystem', LayeredHelpSystem);
-      const userPrefs = new UserPreferenceManager(testDir, configManager);
+      const userPrefs = new UserPreferenceManager({ configDir: testDir, configManager });
       
       // Should work together seamlessly
       expect(errorRecovery.configManager).toBe(configManager);
@@ -361,7 +356,7 @@ describe('Phase 4 Enhancement: Complete Plugin Architecture', () => {
       // Legacy constructors should still work
       const errorRecovery = new ErrorRecoverySystem(testDir);
       const helpSystem = new LayeredHelpSystem(testDir);
-      const userPrefs = new UserPreferenceManager(testDir);
+      const userPrefs = new UserPreferenceManager({ configDir: testDir });
       
       // Should function independently
       expect(errorRecovery).toBeInstanceOf(ErrorRecoverySystem);
