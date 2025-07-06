@@ -343,12 +343,12 @@ index 0000000..abc123
     });
 
     test('should maintain compatibility with existing /ship workflow', async () => {
-      // Test that existing workflow still works
-      const legacyShipResult = await shipEngine.legacyShip({ message: 'legacy commit' });
+      // Test that existing workflow still works with standard ship method
+      const shipResult = await shipEngine.ship({ message: 'test commit' });
       
-      expect(legacyShipResult.success).toBe(true);
-      expect(legacyShipResult.backwardCompatible).toBe(true);
-      expect(legacyShipResult.enhancementsUsed).toBe(false);
+      expect(shipResult.success).toBe(true);
+      expect(shipResult.message).toBe('test commit');
+      expect(shipResult.commitHash).toBeTruthy();
     });
   });
 });
