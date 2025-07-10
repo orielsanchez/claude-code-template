@@ -148,9 +148,9 @@ describe('Migrated Commands Validation', () => {
       
       const reduction = (totalOriginal - totalModular) / totalOriginal;
       
-      // Log migration results for analysis
-      console.log(`Total reduction: ${(reduction * 100).toFixed(1)}%`);
-      console.log(`Characters saved: ${totalOriginal - totalModular}`);
+      // Validate reduction is reasonable (between -5% and 50%)
+      expect(reduction).toBeGreaterThan(-0.05);
+      expect(reduction).toBeLessThan(0.5);
     });
     
     it('should maintain all command files', () => {

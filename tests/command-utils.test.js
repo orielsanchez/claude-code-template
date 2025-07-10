@@ -7,7 +7,7 @@ const os = require('os');
 const CommandBuilder = require('../lib/command-utils/command-builder');
 const { generateHeader, generateUsageExamples } = require('../lib/command-utils/generators/command-header');
 const { generatePhaseContent } = require('../lib/command-utils/generators/phase-content');
-const { loadTemplate } = require('../lib/command-utils/templates/template-loader');
+const { templateManager } = require('../lib/command-utils/templates/template-manager');
 
 describe('Command Documentation Utilities', () => {
   let tempDir;
@@ -89,13 +89,14 @@ describe('Command Documentation Utilities', () => {
 
   describe('Template System', () => {
     it('should load workflow phase templates', () => {
-      const template = loadTemplate('workflow-phases', { 
+      const result = templateManager.loadTemplate('workflow-phases', { 
         phaseNumber: '1',
         phaseName: 'RED',
         phaseGoal: 'Write failing tests',
         phaseSteps: ['Define behavior', 'Write tests', 'Verify failure'],
         learningObjective: 'Force precise thinking'
       });
+      const template = result.content || result;
 
       expect(template).toContain('## Phase 1: RED');
       expect(template).toContain('**Goal:** Write failing tests');
@@ -104,7 +105,8 @@ describe('Command Documentation Utilities', () => {
     });
 
     it('should load quality standards template', () => {
-      const template = loadTemplate('quality-standards');
+      const result = templateManager.loadTemplate('quality-standards');
+      const template = result.content || result;
 
       expect(template).toContain('**Quality Requirements**:');
       expect(template).toContain('Follow all forbidden patterns from CLAUDE.md');
@@ -113,10 +115,11 @@ describe('Command Documentation Utilities', () => {
     });
 
     it('should load integration patterns template', () => {
-      const template = loadTemplate('integration-patterns', {
+      const result = templateManager.loadTemplate('integration-patterns', {
         commandName: 'dev',
         integrations: ['check', 'ship']
       });
+      const template = result.content || result;
 
       expect(template).toContain('## Integration with Other Commands');
       expect(template).toContain('**`/dev` → `/check`**');
@@ -124,7 +127,8 @@ describe('Command Documentation Utilities', () => {
     });
 
     it('should load learning integration template', () => {
-      const template = loadTemplate('learning-integration');
+      const result = templateManager.loadTemplate('learning-integration');
+      const template = result.content || result;
 
       expect(template).toContain('## Learning Integration');
       expect(template).toContain('### **Before Starting**:');
@@ -279,7 +283,7 @@ Some existing content that should be preserved.`;
 
     it('should handle missing template files gracefully', () => {
       expect(() => {
-        loadTemplate('nonexistent-template');
+        templateManager.loadTemplate('nonexistent-template');
       }).toThrow('Template not found: nonexistent-template');
     });
   });
