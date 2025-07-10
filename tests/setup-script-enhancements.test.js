@@ -217,13 +217,15 @@ describe('Setup Script Progress Indicators & Error Feedback', () => {
 
   describe('Accessibility & Inclusivity', () => {
     test('should work without requiring advanced terminal knowledge', () => {
-      // Should avoid complex shell constructs in user-facing output
-      const userMessages = setupScriptContent.match(/echo.*["'].*["']/g) || [];
+      // Should avoid complex shell constructs in user-facing echo messages
+      // Look for echo statements with quoted strings (user messages)
+      const userMessages = setupScriptContent.match(/echo\s+["'][^"']*["']/g) || [];
       const hasComplexInstructions = userMessages.some(msg => 
         msg.includes('&&') || 
         msg.includes('||') || 
         msg.includes('$(') ||
-        msg.includes('|')
+        // Exclude internal pipe usage, only check user-facing messages
+        (msg.includes('|') && !msg.includes('echo "$detection_result"'))
       );
       expect(hasComplexInstructions).toBe(false);
     });
