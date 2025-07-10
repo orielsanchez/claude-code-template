@@ -2,6 +2,8 @@
 
 Automated code quality checks that run after Claude Code modifies files, enforcing project standards with zero tolerance for errors.
 
+Documentation: https://docs.anthropic.com/en/docs/claude-code/hooks
+
 ## Hooks
 
 ### `smart-lint.sh`
@@ -132,3 +134,19 @@ Hooks work best with these tools installed:
 - **Nix**: `nixpkgs-fmt`, `alejandra`, `statix`
 
 Hooks gracefully degrade if tools aren't installed.
+
+## Date Validation Hooks
+
+### `validate-search-date.py` (PreToolUse)
+Validates WebSearch queries to ensure current date context:
+- Blocks searches with outdated year references (2020-2024)
+- Warns about time-sensitive queries without current year context
+- Encourages adding 2025 to search terms for current results
+
+### `validate-search-results.py` (PostToolUse)
+Analyzes search results for date relevance:
+- Warns about outdated timestamps in results
+- Identifies results claiming to be "recent" without current year
+- Suggests refining searches for more current information
+
+Both hooks help ensure web searches account for the current date (2025) rather than relying on training data from 2024.
