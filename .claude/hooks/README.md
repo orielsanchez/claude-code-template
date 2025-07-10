@@ -1,152 +1,207 @@
-# Claude Code Hooks
+# Claude Code Quality Hooks
 
-Automated code quality checks that run after Claude Code modifies files, enforcing project standards with zero tolerance for errors.
+**Automated quality enforcement for professional development**
 
-Documentation: https://docs.anthropic.com/en/docs/claude-code/hooks
+## Overview
 
-## Hooks
+The `.claude/hooks/` directory contains quality enforcement automation that maintains professional coding standards across all projects. These hooks integrate with git and Claude Code to ensure consistent, high-quality output.
 
-### `smart-lint.sh`
-Intelligent project-aware linting that automatically detects language and runs appropriate checks:
-- **Go**: `gofmt`, `golangci-lint` (enforces forbidden patterns like `time.Sleep`, `panic()`, `interface{}`)
-- **Python**: `black`, `ruff` or `flake8`
-- **JavaScript/TypeScript**: `eslint`, `prettier`
-- **Rust**: `cargo fmt`, `cargo clippy`
-- **Nix**: `nixpkgs-fmt`/`alejandra`, `statix`
+## Available Hooks
 
-Features:
-- Detects project type automatically
-- Respects project-specific Makefiles (`make lint`)
-- Smart file filtering (only checks modified files)
-- Fast mode available (`--fast` to skip slow checks)
-- Exit code 2 means issues found - ALL must be fixed
+### **`smart-lint.sh`** - Multi-Language Quality Checker
+**Purpose**: Automated quality checks that run during development and git operations
 
-#### Failure
+**Supported Languages & Tools**:
+- **JavaScript/TypeScript**: ESLint, Prettier, npm test
+- **Python**: flake8, black, pytest  
+- **Rust**: cargo check, clippy, rustfmt, cargo test
+- **Go**: go vet, go test, gofmt
+- **Swift**: SwiftLint, SwiftFormat (when available)
+- **Universal**: Basic syntax and format checking
 
-```
-> Edit operation feedback:
-  - [~/.claude/hooks/smart-lint.sh]:
-  🔍 Style Check - Validating code formatting...
-  ────────────────────────────────────────────
-  [INFO] Project type: go
-  [INFO] Running Go formatting and linting...
-  [INFO] Using Makefile targets
+**Features**:
+- 🔍 **Auto-detection**: Identifies project type from config files
+- ⚡ **Performance optimized**: Runs only relevant checks
+- 📊 **Clear reporting**: Detailed output with status indicators
+- 🛡️ **Zero tolerance**: Blocks commits with quality issues
+- 🔄 **Incremental**: Focuses on changed files when possible
 
-  ═══ Summary ═══
-  ❌ Go linting failed (make lint)
+### **Git Integration Hooks**
 
-  Found 1 issue(s) that MUST be fixed!
-  ════════════════════════════════════════════
-  ❌ ALL ISSUES ARE BLOCKING ❌
-  ════════════════════════════════════════════
-  Fix EVERYTHING above until all checks are ✅ GREEN
+The setup script automatically installs:
 
-  🛑 FAILED - Fix all issues above! 🛑
-  📋 NEXT STEPS:
-    1. Fix the issues listed above
-    2. Verify the fix by running the lint command again
-    3. Continue with your original task
-```
-```
+#### **`commit-msg`** - Professional Commit Standards
+- ❌ **Blocks Claude attribution** in commit messages
+- ❌ **Prevents emojis** in commit messages  
+- ✅ **Enforces professional standards** automatically
 
-#### Success
-
-```
-> Task operation feedback:
-  - [~/.claude/hooks/smart-lint.sh]:
-  🔍 Style Check - Validating code formatting...
-  ────────────────────────────────────────────
-  [INFO] Project type: go
-  [INFO] Running Go formatting and linting...
-  [INFO] Using Makefile targets
-
-  👉 Style clean. Continue with your task.
-```
-```
-
-By `exit 2` on success and telling it to continue, we prevent Claude from stopping after it has corrected
-the style issues.
-
-### `ntfy-notifier.sh`
-Push notifications via ntfy service for Claude Code events:
-- Sends alerts when Claude finishes tasks
-- Includes terminal context (tmux/Terminal window name) for identification
-- Requires `~/.config/claude-code-ntfy/config.yaml` with topic configuration
-
-## Installation
-
-Automatically installed by Nix home-manager to `~/.claude/hooks/`
-
-## Configuration
-
-### Global Settings
-Set environment variables or create project-specific `.claude-hooks-config.sh`:
-
+**Forbidden Patterns**:
 ```bash
-CLAUDE_HOOKS_ENABLED=false      # Disable all hooks
-CLAUDE_HOOKS_DEBUG=1            # Enable debug output
+# These will be blocked:
+"Generated with Claude Code"
+"Co-Authored-By: Claude"
+"🎉 Add new feature"  # No emojis
 ```
 
-### Per-Project Settings
-Create `.claude-hooks-config.sh` in your project root:
+## How Hooks Work
 
+### **During Development**
 ```bash
-# Language-specific options
-CLAUDE_HOOKS_GO_ENABLED=false
-CLAUDE_HOOKS_GO_COMPLEXITY_THRESHOLD=30
-CLAUDE_HOOKS_PYTHON_ENABLED=false
+# Manual quality check
+./.claude/hooks/smart-lint.sh
 
-# See example-claude-hooks-config.sh for all options
+# Automatic check on commit
+git commit -m "add user authentication"
+# → Runs commit-msg hook
+# → Blocks if issues found
 ```
 
-### Excluding Files
-Create `.claude-hooks-ignore` in your project root using gitignore syntax:
-
-```
-vendor/**
-node_modules/**
-*.pb.go
-*_generated.go
-```
-
-Add `// claude-hooks-disable` to the top of any file to skip hooks.
-
-## Usage
-
+### **Integration with Commands**
 ```bash
-./smart-lint.sh           # Auto-runs after Claude edits
-./smart-lint.sh --debug   # Debug mode
-./smart-lint.sh --fast    # Skip slow checks
+/check                    # Calls smart-lint.sh
+/ship "add feature"       # Runs all quality checks before commit
 ```
 
-### Exit Codes
-- `0`: All checks passed ✅
-- `1`: General error (missing dependencies)
-- `2`: Issues found - must fix ALL
+## Hook Configuration
 
-## Dependencies
+### **Language-Specific Setup**
 
-Hooks work best with these tools installed:
-- **Go**: `golangci-lint`
-- **Python**: `black`, `ruff`
-- **JavaScript**: `eslint`, `prettier` 
-- **Rust**: `cargo fmt`, `cargo clippy`
-- **Nix**: `nixpkgs-fmt`, `alejandra`, `statix`
+The smart-lint.sh hook automatically configures for detected languages:
 
-Hooks gracefully degrade if tools aren't installed.
+**JavaScript/Node.js**:
+```bash
+# Looks for: package.json
+# Runs: npm test, eslint, prettier
+# Config: Uses project's .eslintrc, .prettierrc
+```
 
-## Date Validation Hooks
+**Python**:
+```bash
+# Looks for: requirements.txt, pyproject.toml, setup.py
+# Runs: pytest, flake8, black
+# Config: Uses project's setup.cfg, pyproject.toml
+```
 
-### `validate-search-date.py` (PreToolUse)
-Validates WebSearch queries to ensure current date context:
-- Blocks searches with outdated year references (2020-2024)
-- Warns about time-sensitive queries without current year context
-- Encourages adding 2025 to search terms for current results
+**Rust**:
+```bash
+# Looks for: Cargo.toml
+# Runs: cargo check, clippy, test, fmt
+# Config: Uses Cargo.toml settings
+```
 
-### `validate-search-results.py` (PostToolUse)
-Analyzes search results for date relevance:
-- Warns about outdated timestamps in results
-- Identifies results claiming to be "recent" without current year
-- Suggests refining searches for more current information
+**Go**:
+```bash
+# Looks for: go.mod
+# Runs: go vet, go test, gofmt check
+# Config: Uses go.mod configuration
+```
 
-Both hooks help ensure web searches account for the current date (2025) rather than relying on training data from 2024.
+### **Custom Configuration**
+
+For project-specific hook behavior, create:
+
+**`.claude-hooks-config.sh`**:
+```bash
+# Override default behavior
+SKIP_TESTS=false
+LINT_STRICT=true
+FORMAT_CHECK=true
+
+# Custom commands
+CUSTOM_LINT_CMD="your-custom-linter"
+CUSTOM_TEST_CMD="your-test-runner"
+```
+
+## Quality Standards Enforced
+
+### **Universal Standards**:
+- ✅ **No emojis** in code, comments, or commits
+- ✅ **No Claude attribution** in commit messages
+- ✅ **Proper error handling** for each language
+- ✅ **Consistent formatting** following language conventions
+- ✅ **Clean commit history** with professional messages
+
+### **Language-Specific Standards**:
+- **JavaScript**: ESLint rules, Prettier formatting
+- **Python**: PEP 8 compliance, type hints encouraged
+- **Rust**: Clippy lints, rustfmt formatting, no unwrap()
+- **Go**: Go vet checks, gofmt formatting
+- **Swift**: SwiftLint rules, SwiftFormat style
+
+## Hook Development
+
+### **Adding New Language Support**
+
+1. **Detection Logic** in `smart-lint.sh`:
+```bash
+elif [ -f "package.swift" ]; then
+    echo "📦 Detected Swift Package Manager project"
+    # Add Swift-specific checks
+```
+
+2. **Quality Checks**:
+```bash
+if command -v swiftlint >/dev/null 2>&1; then
+    swiftlint --strict && echo "✅ SwiftLint passed"
+fi
+```
+
+3. **Integration Testing**:
+- Test with real projects of that language
+- Verify error reporting is clear
+- Ensure performance is acceptable
+
+### **Hook Performance**
+
+**Optimization Strategies**:
+- ⚡ **Incremental checks**: Focus on changed files
+- 🎯 **Smart detection**: Run only relevant tools
+- 🔄 **Parallel execution**: Run independent checks concurrently
+- 📊 **Clear reporting**: Fast feedback with detailed results
+
+### **Troubleshooting Hooks**
+
+**Common Issues**:
+
+1. **Hook not executing**:
+```bash
+# Check permissions
+chmod +x .claude/hooks/smart-lint.sh
+
+# Check git hooks installation
+ls -la .git/hooks/commit-msg
+```
+
+2. **False positives**:
+```bash
+# Temporarily disable for debugging
+export CLAUDE_HOOKS_DISABLED=true
+git commit -m "test commit"
+```
+
+3. **Performance issues**:
+```bash
+# Enable timing information
+export CLAUDE_HOOKS_TIMING=true
+./.claude/hooks/smart-lint.sh
+```
+
+## Integration with `lib/` Infrastructure
+
+The hooks system integrates with:
+- **`lib/hook-utils.sh`**: Shared utilities and patterns
+- **`lib/linters/`**: Language-specific linting modules
+- **`lib/detectors/`**: Project type detection
+- **Framework detection**: Automatic tool configuration
+
+This creates a comprehensive quality automation system that adapts to your project and enforces professional standards automatically.
+
+## Best Practices
+
+1. **Run hooks locally** before committing
+2. **Keep tools updated** (ESLint, Prettier, etc.)
+3. **Configure project-specific rules** in standard config files
+4. **Test hook behavior** in your development environment
+5. **Use `/check` command** for comprehensive validation
+
+The hooks system ensures that all code committed through Claude Code meets professional standards automatically.

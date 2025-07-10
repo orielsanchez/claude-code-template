@@ -4,7 +4,7 @@
 
 ## Summary
 
-**Quick Start**: Get systematic TDD workflows with Claude Code in 30 seconds. One command sets up quality-first development with 9 power commands, automated testing, and learning protocols.
+**Quick Start**: Get systematic TDD workflows with Claude Code in 30 seconds. One command sets up quality-first development with 10 power commands, automated testing, and learning protocols.
 
 **Perfect for**: Teams wanting consistent, production-ready AI-assisted development.
 
@@ -43,8 +43,17 @@ claude                                # Start Claude Code
 
 #### Add to Existing Project
 
+**Preserve your existing CLAUDE.md:**
 ```bash
-# Quick copy to existing project
+# Setup script will detect and preserve your existing CLAUDE.md
+curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
+claude                 # Start Claude Code in your project
+/dev "your first feature"
+```
+
+**Replace with template CLAUDE.md:**
+```bash
+# Manual copy method - overwrites existing CLAUDE.md
 curl -sL https://github.com/orielsanchez/claude-code-template/archive/main.tar.gz | tar xz --strip=1 claude-code-template-main/{CLAUDE.md,.claude}
 claude                 # Start Claude Code in your project
 /dev "your first feature"
@@ -56,7 +65,7 @@ claude                 # Start Claude Code in your project
 
 ## What is Claude Code?
 
-**Claude Code** is an AI-powered command-line tool that revolutionizes software development by embedding Claude Opus 4 directly into your terminal. Unlike traditional AI coding assistants that just suggest code, Claude Code is **agentic** - meaning it can:
+**Claude Code** is an AI-powered command-line tool that revolutionizes software development by embedding Claude directly into your terminal. Unlike traditional AI coding assistants that just suggest code, Claude Code is **agentic** - meaning it can:
 
 - **Understand your entire codebase** without manual context selection
 - **Make coordinated changes** across multiple files
@@ -103,11 +112,12 @@ You get this agentic workflow:
 | **`/debug`** | Systematic debugging | `/debug "login fails"` |
 | **`/refactor`** | Code improvement | `/refactor "simplify auth"` |
 | **`/plan`** | Strategic roadmap generation | `/plan "improve auth system"` |
+| **`/explore`** | Codebase exploration & analysis | `/explore "authentication flow"` |
 | **`/check`** | Quality gate | `/check` |
 | **`/ship`** | Commit & document | `/ship "add auth"` |
 | **`/help`** | Get help & guidance | `/help dev` |
 | **`/prompt`** | Context handoff | `/prompt` |
-| **`/claude-md`** | Update instructions | `/claude-md refresh` |
+| **`/claude-md`** | Update instructions | `/claude-md backup` |
 
 ## Typical Workflow
 
@@ -145,7 +155,7 @@ You get this agentic workflow:
 🎯 **Systematic Workflows** - Research → Plan → Test → Implement → Ship  
 🛡️ **Quality Enforcement** - Zero tolerance for bad patterns, automatic checks  
 📚 **Learning-First Approach** - Build senior-level skills, not just working code  
-⚡ **9 Power Commands** - `/dev`, `/debug`, `/refactor`, `/plan`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
+⚡ **10 Power Commands** - `/dev`, `/debug`, `/refactor`, `/plan`, `/explore`, `/check`, `/ship`, `/help`, `/prompt`, `/claude-md`  
 🔧 **Multi-Language Support** - Works with any tech stack  
 📖 **Battle-Tested Practices** - Based on real-world AI-assisted development
 
@@ -184,14 +194,16 @@ Complete instruction file with:
 - **Learning-First Development Protocol** - Build skills while building code
 - **Test-Driven Development Protocol** - RED → GREEN → REFACTOR with AI
 - **Quality standards** - Zero unwrap(), no emojis, production-ready code
-- **Rust-specific rules** - Comprehensive forbidden patterns and best practices
+- **Universal forbidden patterns** - Comprehensive quality rules for all languages
 - **Mastery progression tracking** - Skill development from Novice → Expert
 
 ### `.claude/commands/`
-Eight powerful commands for systematic development:
+Ten powerful commands for systematic development:
 - `dev.md` - TDD-first development workflow (primary command)
 - `debug.md` - Systematic debugging and root cause analysis
 - `refactor.md` - Systematic code refactoring and improvement workflows
+- `plan.md` - Strategic roadmap generation and planning
+- `explore.md` - Codebase exploration and analysis workflows
 - `check.md` - Comprehensive quality verification
 - `ship.md` - Roadmap updates and commit workflow
 - `help.md` - Interactive help and guidance system
@@ -199,8 +211,11 @@ Eight powerful commands for systematic development:
 - `claude-md.md` - Instruction file maintenance
 
 ### Configuration
-- `.claude/hooks/` - Quality enforcement hooks
+The setup script creates:
+- `.claude/hooks/smart-lint.sh` - Quality enforcement hooks
 - `.claude/settings.local.json` - Local Claude Code settings
+- Language-specific tooling configurations
+- Enhanced project detection (when available)
 
 ### Project Types Supported
 
@@ -211,7 +226,11 @@ The setup script supports multiple project types:
 - **Universal** - Works with any language or framework
 
 ### Advanced Usage
-The setup script automatically handles project initialization and can be run multiple times to update your Claude setup.
+The **hybrid setup script** works in two modes:
+- **`curl | bash` mode**: Downloads commands from GitHub for fresh setups
+- **Local mode**: Copies from `.claude/commands/` when running in cloned template
+- **Smart detection**: Automatically uses framework detection when available
+- **Project customization**: Adapts to your specific tech stack
 
 </details>
 
@@ -230,18 +249,21 @@ The setup script automatically handles project initialization and can be run mul
 /ship "add user login system"                # Document & commit
 ```
 
-**Code Improvement:**
+**Code Exploration & Analysis:**
 ```bash
-/refactor "simplify login logic"  # Systematic refactoring
+/explore "authentication system"  # Understand existing code patterns
+/plan "refactor auth module"      # Create improvement roadmap
+/refactor "simplify auth logic"   # Systematic refactoring
 /check                            # Validate changes
-/ship "improve code quality"      # Commit changes
+/ship "improve auth architecture" # Commit changes
 ```
 
 **Feature Enhancement:**
 ```bash
-/dev "improve login"     # TDD approach for enhancements
-/check                   # Validate changes
-/ship "enhance login"    # Commit changes
+/explore "existing feature"      # Understand current implementation
+/dev "enhance feature"           # TDD approach for improvements
+/check                           # Validate changes
+/ship "enhance feature"          # Commit changes
 ```
 
 </details>
@@ -253,7 +275,16 @@ The setup script automatically handles project initialization and can be run mul
 <details>
 <summary>📅 Version History (click to expand)</summary>
 
-**v1.7 - Strategic Planning Command** *(Latest)*
+**v1.8 - Hybrid Setup & Cleanup** *(Latest)*
+- **IMPROVED**: Hybrid setup.sh supports both `curl | bash` and local template usage
+- **FIXED**: Added missing `explore` command to setup (now 10 commands total)
+- **ENHANCED**: Smart framework detection integration for project customization
+- **CLEANED**: Removed obsolete `.claude/commands-modular/` and duplicate files
+- **OPTIMIZED**: Setup script now copies from local source when available
+- **IMPROVED**: Better error handling and user feedback during setup
+- **MAINTAINED**: 100% backward compatibility with existing workflows
+
+**v1.7 - Strategic Planning Command**
 - **NEW**: `/plan` command for comprehensive roadmap generation
 - Generate phase-based roadmaps for any project or improvement initiative  
 - 5-phase methodology: Discovery → Design → Planning → Implementation → Resources

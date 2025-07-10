@@ -233,30 +233,66 @@ print_status "Configuring project layout"
 
 # Step 5: Download main configuration
 print_step "Installing main configuration files"
-if ! download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/CLAUDE.md" "CLAUDE.md"; then
-    exit 1
+if [ -f "CLAUDE.md" ]; then
+    print_status "CLAUDE.md already exists - preserving existing file"
+    print_info "Your existing CLAUDE.md will not be modified"
+else
+    if ! download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/CLAUDE.md" "CLAUDE.md"; then
+        exit 1
+    fi
+    print_status "Downloaded CLAUDE.md"
 fi
-print_status "Downloaded CLAUDE.md"
 print_status "Installing configuration files complete"
 
-# Step 6: Download command files
-print_step "Downloading and Installing command files"
-commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan")
+# Step 6: Install command files (hybrid approach)
+print_step "Installing command files"
+commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan" "explore")
 total_commands=${#commands[@]}
 current_command=0
 
-for cmd in "${commands[@]}"; do
-    current_command=$((current_command + 1))
-    echo -n "  Downloading ${cmd}.md... ($current_command/$total_commands) "
-    
-    if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"; then
-        echo "✓"
-    else
-        echo "✗"
-        exit 1
-    fi
-done
-print_status "Downloaded $total_commands command files"
+# Detect if we're running from a cloned template repo
+template_source_dir=""
+if [ -d ".claude/commands" ] && [ -f ".claude/commands/dev.md" ]; then
+    template_source_dir=".claude/commands"
+    print_status "Detected local template - using local command files"
+elif [ -d "claude-code-template/.claude/commands" ] && [ -f "claude-code-template/.claude/commands/dev.md" ]; then
+    template_source_dir="claude-code-template/.claude/commands"
+    print_status "Detected template in subdirectory - using local command files"
+fi
+
+# Install commands from local source or download from GitHub
+install_commands() {
+    for cmd in "${commands[@]}"; do
+        current_command=$((current_command + 1))
+        echo -n "  Installing ${cmd}.md... ($current_command/$total_commands) "
+        
+        if [ -n "$template_source_dir" ] && [ -f "$template_source_dir/${cmd}.md" ]; then
+            # Copy from local source
+            if cp "$template_source_dir/${cmd}.md" ".claude/commands/${cmd}.md"; then
+                echo "✓ (local)"
+            else
+                echo "✗ (copy failed)"
+                return 1
+            fi
+        else
+            # Download from GitHub
+            if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"; then
+                echo "✓ (download)"
+            else
+                echo "✗ (download failed)"
+                return 1
+            fi
+        fi
+    done
+    return 0
+}
+
+if install_commands; then
+    print_status "Installed $total_commands command files"
+else
+    print_error "Failed to install command files"
+    exit 1
+fi
 
 # Step 7: Download settings and create hooks
 print_step "Configuring settings and quality hooks"
@@ -401,7 +437,71 @@ fi
 
 print_status "Quality hooks configured"
 
-# Step 8: Final configuration
+# Step 8: Enhanced project detection and customization
+print_step "Detecting project type and customizing setup"
+
+# Try to use enhanced framework detection if available
+run_framework_detection() {
+    local lib_path=""
+    
+    # Look for lib directory in various locations
+    if [ -d "lib" ] && [ -f "lib/framework-detector.js" ]; then
+        lib_path="lib"
+    elif [ -d "claude-code-template/lib" ] && [ -f "claude-code-template/lib/framework-detector.js" ]; then
+        lib_path="claude-code-template/lib"
+    fi
+    
+    if [ -n "$lib_path" ] && command -v node >/dev/null 2>&1; then
+        print_status "Enhanced framework detection available - analyzing project..."
+        
+        # Create temporary detection script
+        cat > /tmp/framework-detect.js << EOF
+const path = require('path');
+const fs = require('fs');
+
+// Add the lib directory to the path
+const libPath = path.resolve('$lib_path');
+const { detectFrameworks } = require(path.join(libPath, 'framework-detector'));
+
+async function detect() {
+    try {
+        const detected = await detectFrameworks(process.cwd());
+        console.log(JSON.stringify(detected, null, 2));
+    } catch (error) {
+        console.error('Detection failed:', error.message);
+        process.exit(1);
+    }
+}
+
+detect();
+EOF
+        
+        # Run detection and capture output
+        if detection_result=$(node /tmp/framework-detect.js 2>/dev/null); then
+            print_status "Project analysis complete"
+            echo "$detection_result" > .claude/project-detection.json
+            
+            # Extract primary language/framework for user info
+            if command -v node >/dev/null 2>&1; then
+                primary=$(echo "$detection_result" | node -pe "JSON.parse(require('fs').readFileSync(0)).primary || 'Unknown'")
+                if [ "$primary" != "Unknown" ]; then
+                    print_status "Detected: $primary project"
+                fi
+            fi
+        else
+            print_warning "Enhanced detection failed - using basic setup"
+        fi
+        
+        # Cleanup
+        rm -f /tmp/framework-detect.js
+    else
+        print_status "Using basic project setup (enhanced detection not available)"
+    fi
+}
+
+run_framework_detection
+
+# Step 9: Final configuration
 print_step "Finalizing setup and configuration"
 
 # Add to .gitignore if not already present
@@ -426,13 +526,14 @@ print_status "Claude Code setup complete! (${setup_time}s)"
 # Setup summary
 echo ""
 echo -e "${BLUE}📋 Installation Summary:${NC}"
-echo "  ✓ Downloaded 1 configuration file (CLAUDE.md)"
-echo "  ✓ Downloaded $total_commands command files"
+echo "  ✓ Installed 1 configuration file (CLAUDE.md)"
+echo "  ✓ Installed $total_commands command files"
 echo "  ✓ Configured 1 quality hook (smart-lint.sh)"
 if [ -d ".git" ]; then
     echo "  ✓ Installed git commit-msg hook (Claude attribution enforcement)"
 fi
 echo "  ✓ Created .claude directory structure"
+echo "  ✓ Enhanced project detection (when available)"
 echo "  ✓ Updated .gitignore"
 echo ""
 
@@ -440,10 +541,11 @@ echo -e "${GREEN}🎯 Available Claude Code commands:${NC}"
 echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
 echo "  /debug    - Systematic debugging workflow"  
 echo "  /refactor - Code improvement workflow"
+echo "  /plan     - Strategic planning & roadmap generation"
+echo "  /explore  - Codebase exploration & analysis"
 echo "  /check    - Quality verification"
 echo "  /ship     - Complete and commit changes (NO Claude attribution)"
 echo "  /prompt   - Generate LLM handoff prompts"
-echo "  /plan     - Strategic planning & roadmap generation"
 echo "  /help     - Comprehensive help system"
 echo ""
 
