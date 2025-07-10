@@ -176,7 +176,6 @@ download_with_retry() {
         
         if curl -sL --max-time 30 --connect-timeout 10 \
                 --fail --location --show-error \
-                --cacert-check \
                 --write-out "HTTPSTATUS:%{http_code}\nCONTENT_TYPE:%{content_type}" \
                 "$url" > "$output" 2>"$curl_output"; then
             
