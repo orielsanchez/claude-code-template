@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for changelog generation
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run full test suite
+      run: npm test
+    
+    - name: Run test coverage
+      run: npm run test:coverage
+    
+    - name: Run quality checks
+      run: |
+        if [ -f ".claude/hooks/smart-lint.sh" ]; then
+          chmod +x .claude/hooks/smart-lint.sh
+          .claude/hooks/smart-lint.sh
+        fi
+    
+    - name: Extract version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get commits since last tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        
+        if [ -n "$PREVIOUS_TAG" ]; then
+          COMMITS=$(git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD)
+        else
+          COMMITS=$(git log --pretty=format:"- %s")
+        fi
+        
+        # Create changelog content
+        cat > CHANGELOG.md << EOF
+        ## Changes in ${{ steps.version.outputs.tag_name }}
+        
+        $COMMITS
+        
+        ## Project Stats
+        - Tests: $(npm test 2>&1 | grep -o '[0-9]* passed' | head -1)
+        - Coverage: $(npm run test:coverage 2>&1 | grep -o '[0-9]*\.[0-9]*%' | head -1 || echo "Generated")
+        - Languages Supported: JavaScript, TypeScript, Python, Rust, Swift
+        - Framework Detection: 50+ modern patterns
+        
+        ## Installation
+        
+        \`\`\`bash
+        curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
+        \`\`\`
+        
+        Or manually download and extract the release assets.
+        EOF
+        
+        echo "changelog_file=CHANGELOG.md" >> $GITHUB_OUTPUT
+    
+    - name: Create release archive
+      run: |
+        # Create clean distribution without development files
+        mkdir -p dist/claude-code-template
+        
+        # Copy essential files
+        cp CLAUDE.md dist/claude-code-template/
+        cp README.md dist/claude-code-template/
+        cp package.json dist/claude-code-template/
+        cp setup.sh dist/claude-code-template/
+        
+        # Copy source code
+        cp -r lib dist/claude-code-template/
+        cp -r .claude dist/claude-code-template/
+        
+        # Copy selected documentation
+        [ -f "ROADMAP-SWIFT-INTEGRATION-2025-07-10.md" ] && cp ROADMAP-SWIFT-INTEGRATION-2025-07-10.md dist/claude-code-template/
+        
+        # Create archive
+        cd dist
+        tar -czf claude-code-template-${{ steps.version.outputs.version }}.tar.gz claude-code-template/
+        zip -r claude-code-template-${{ steps.version.outputs.version }}.zip claude-code-template/
+        
+        # Move back to root
+        mv claude-code-template-*.tar.gz ../
+        mv claude-code-template-*.zip ../
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.tag_name }}
+        name: Claude Code Template ${{ steps.version.outputs.version }}
+        body_path: ${{ steps.changelog.outputs.changelog_file }}
+        draft: false
+        prerelease: false
+        files: |
+          claude-code-template-${{ steps.version.outputs.version }}.tar.gz
+          claude-code-template-${{ steps.version.outputs.version }}.zip
+          coverage/lcov-report/index.html
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Update latest release info
+      run: |
+        echo "Release ${{ steps.version.outputs.tag_name }} created successfully"
+        echo "Download URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag_name }}"
+        echo "Archive files:"
+        echo "  - claude-code-template-${{ steps.version.outputs.version }}.tar.gz"
+        echo "  - claude-code-template-${{ steps.version.outputs.version }}.zip"
