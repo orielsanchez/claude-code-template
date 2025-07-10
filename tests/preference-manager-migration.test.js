@@ -70,7 +70,8 @@ describe('UserPreferenceManager Migration to BaseManager', () => {
 
   describe('Enhanced Error Handling', () => {
     test('should use BaseManager.logError for standardized error handling', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      // Clear any existing error logs
+      preferenceManager.errorLogs = [];
       
       // Trigger an error scenario
       preferenceManager.logError(new Error('test error'), { 
@@ -78,15 +79,16 @@ describe('UserPreferenceManager Migration to BaseManager', () => {
         userId: preferenceManager.userId 
       });
       
-      expect(consoleSpy).toHaveBeenCalledWith('Manager Error:', expect.objectContaining({
+      // Check that error was logged in the errorLogs array
+      expect(preferenceManager.errorLogs).toHaveLength(1);
+      expect(preferenceManager.errorLogs[0]).toMatchObject({
         error: 'test error',
         context: expect.objectContaining({ 
           action: 'test-operation',
           userId: 'test-user'
-        })
-      }));
-      
-      consoleSpy.mockRestore();
+        }),
+        timestamp: expect.any(String)
+      });
     });
   });
 

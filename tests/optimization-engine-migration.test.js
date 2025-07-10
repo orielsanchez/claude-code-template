@@ -62,7 +62,8 @@ describe('OptimizationEngine Migration to BaseManager', () => {
 
   describe('Enhanced Error Handling', () => {
     test('should use BaseManager.logError for standardized error handling', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      // Clear any existing error logs
+      optimizationEngine.errorLogs = [];
       
       // Trigger an error scenario
       optimizationEngine.logError(new Error('test error'), { 
@@ -70,15 +71,16 @@ describe('OptimizationEngine Migration to BaseManager', () => {
         userId: optimizationEngine.userId 
       });
       
-      expect(consoleSpy).toHaveBeenCalledWith('Manager Error:', expect.objectContaining({
+      // Check that error was logged in the errorLogs array
+      expect(optimizationEngine.errorLogs).toHaveLength(1);
+      expect(optimizationEngine.errorLogs[0]).toMatchObject({
         error: 'test error',
         context: expect.objectContaining({ 
           action: 'test-operation',
           userId: 'test-user'
-        })
-      }));
-      
-      consoleSpy.mockRestore();
+        }),
+        timestamp: expect.any(String)
+      });
     });
   });
 
