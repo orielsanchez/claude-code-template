@@ -32,31 +32,58 @@ def main():
         # Current year for validation
         current_year = datetime.now().year
         
-        # Check for outdated year references
-        year_pattern = r'\b(202[0-4])\b'
-        outdated_years = re.findall(year_pattern, query)
+        # Check for historical intent keywords
+        historical_keywords = [
+            "history", "changelog", "release", "version", "archive", 
+            "legacy", "migration", "deprecated", "old", "previous",
+            "comparison", "vs", "versus", "difference", "evolution",
+            "retrospective", "review", "what happened", "timeline",
+            "older", "past", "former", "earlier"
+        ]
         
-        if outdated_years:
+        # Check for explicit historical intent
+        explicit_historical = any(keyword in query.lower() for keyword in historical_keywords)
+        
+        # Check if query already has old years (2020-2024)
+        old_year_pattern = r'\b(202[0-4])\b'
+        mentioned_old_years = re.findall(old_year_pattern, query)
+        
+        # Check if query already has current/future years (2025+)
+        current_year_pattern = r'\b(202[5-9])\b'
+        has_current_year = bool(re.search(current_year_pattern, query))
+        
+        # If historical intent with old years, allow as-is
+        if explicit_historical and mentioned_old_years:
             response = {
-                "decision": "block",
-                "reason": f"Search query contains outdated year(s): {', '.join(set(outdated_years))}. Current year is {current_year}. Please update your search to reflect current date context."
+                "continue": True,
+                "message": f"ℹ️  Historical search detected for {', '.join(set(mentioned_old_years))} - preserving original query"
             }
             print(json.dumps(response))
-            sys.exit(2)
+            return
         
-        # Check if query lacks current context for time-sensitive topics
+        # If old years without historical intent, suggest current context
+        if mentioned_old_years and not explicit_historical:
+            response = {
+                "decision": "continue",
+                "message": f"⚠️  Query mentions {', '.join(set(mentioned_old_years))} but current year is {current_year}. Add 'historical' if you want old info, otherwise search will default to current context."
+            }
+            print(json.dumps(response))
+            return
+        
+        # For queries without year context, suggest adding current year
         time_sensitive_keywords = [
             "latest", "current", "recent", "new", "update", "modern", 
-            "today", "now", "documentation", "docs", "guide", "tutorial"
+            "documentation", "docs", "guide", "tutorial", "best practices"
         ]
         
         has_time_sensitive = any(keyword in query.lower() for keyword in time_sensitive_keywords)
-        has_year_context = bool(re.search(r'\b202[5-9]\b', query))
         
-        if has_time_sensitive and not has_year_context:
+        if (has_time_sensitive or not has_current_year) and not explicit_historical:
+            # Suggest modified query with current year
+            modified_query = f"{query} {current_year}"
             response = {
                 "decision": "continue",
-                "message": f"⚠️  Date Context Reminder: Searching for '{query}' - consider adding {current_year} to ensure current results"
+                "message": f"💡 Auto-suggesting current context: Consider searching '{modified_query}' for {current_year} results"
             }
             print(json.dumps(response))
             return
