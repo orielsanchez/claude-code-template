@@ -19,15 +19,15 @@ NC='\033[0m' # No Color
 
 # Print colored status messages
 print_status() {
-    echo -e "${GREEN}✓${NC} $1"
+    echo -e "${GREEN}[OK]${NC} $1"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠${NC} $1"
+    echo -e "${YELLOW}!${NC} $1"
 }
 
 print_error() {
-    echo -e "${RED}✗${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1"
 }
 
 # Check if a command exists
@@ -121,7 +121,7 @@ run_enhanced_framework_setup() {
     
     # Check if Node.js and our detection system are available
     if check_command_exists node && [ -f "$template_dir/lib/framework-detector.js" ]; then
-        print_status "🔍 Auto-detecting project framework..."
+        print_status "Auto-detecting project framework..."
         
         # Create a simple Node.js script to run detection
         cat > /tmp/enhanced-setup.js << 'EOF'

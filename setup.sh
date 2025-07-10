@@ -57,23 +57,23 @@ print_step() {
     echo ""
     progress_bar $CURRENT_STEP $TOTAL_STEPS
     echo ""
-    echo -e "${GREEN}✓${NC} [$CURRENT_STEP/$TOTAL_STEPS] $1"
+    echo -e "${GREEN}[OK]${NC} [$CURRENT_STEP/$TOTAL_STEPS] $1"
 }
 
 print_status() {
-    echo -e "${GREEN}✓${NC} $1"
+    echo -e "${GREEN}[OK]${NC} $1"
 }
 
 print_error() {
-    echo -e "${RED}❌${NC} $1" >&2
+    echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠${NC} $1"
+    echo -e "${YELLOW}[WARN]${NC} $1"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ${NC} $1"
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
 
 # Signal handling for graceful interruption
@@ -172,7 +172,7 @@ download_with_retry() {
 }
 
 # Header
-echo -e "${BLUE}🚀 Claude Code Enhanced Setup${NC}"
+echo -e "${BLUE}Claude Code Enhanced Setup${NC}"
 echo "========================================="
 print_info "Setup takes approximately 30 seconds"
 print_info "Estimated time: ${ESTIMATED_DURATION} seconds"
@@ -250,15 +250,7 @@ commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "p
 total_commands=${#commands[@]}
 current_command=0
 
-# Detect if we're running from a cloned template repo
-template_source_dir=""
-if [ -d ".claude/commands" ] && [ -f ".claude/commands/dev.md" ]; then
-    template_source_dir=".claude/commands"
-    print_status "Detected local template - using local command files"
-elif [ -d "claude-code-template/.claude/commands" ] && [ -f "claude-code-template/.claude/commands/dev.md" ]; then
-    template_source_dir="claude-code-template/.claude/commands"
-    print_status "Detected template in subdirectory - using local command files"
-fi
+# Always download from GitHub for consistency and simplicity
 
 # Install commands from local source or download from GitHub
 install_commands() {
@@ -266,22 +258,11 @@ install_commands() {
         current_command=$((current_command + 1))
         echo -n "  Installing ${cmd}.md... ($current_command/$total_commands) "
         
-        if [ -n "$template_source_dir" ] && [ -f "$template_source_dir/${cmd}.md" ]; then
-            # Copy from local source
-            if cp "$template_source_dir/${cmd}.md" ".claude/commands/${cmd}.md"; then
-                echo "✓ (local)"
-            else
-                echo "✗ (copy failed)"
-                return 1
-            fi
+        if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"; then
+            echo "[OK] (download)"
         else
-            # Download from GitHub
-            if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"; then
-                echo "✓ (download)"
-            else
-                echo "✗ (download failed)"
-                return 1
-            fi
+            echo "[ERROR] (download failed)"
+            return 1
         fi
     done
     return 0
@@ -297,10 +278,60 @@ fi
 # Step 7: Download settings and create hooks
 print_step "Configuring settings and quality hooks"
 
-# Download settings
-if ! download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/settings.local.json" ".claude/settings.local.json"; then
-    exit 1
-fi
+# Create simple settings.json
+cat > .claude/settings.json << 'EOF'
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "claude-code-template",
+    "type": "template"
+  },
+  "features": {
+    "tdd": true,
+    "quality_hooks": true,
+    "professional_standards": true
+  },
+  "git_hooks": {
+    "pre_commit": true,
+    "commit_msg": true,
+    "smart_lint": true
+  },
+  "quality": {
+    "emoji_enforcement": true,
+    "claude_attribution_prevention": true,
+    "forbidden_patterns": true
+  },
+  "defaults": {
+    "workflow": "tdd-first",
+    "primary_command": "/dev",
+    "quality_gate": "/check"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validate-search-date.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command", 
+            "command": "python .claude/hooks/validate-search-results.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+EOF
 
 # Create enhanced smart-lint.sh hook
 cat > .claude/hooks/smart-lint.sh << 'EOF'
@@ -310,25 +341,25 @@ cat > .claude/hooks/smart-lint.sh << 'EOF'
 # Exit codes: 0 = success, 1 = error, 2 = issues found
 set +e
 
-echo "🔍 Running quality checks..."
+echo "Running quality checks..."
 
 # Detect project type and run appropriate checks
 if [ -f "package.json" ]; then
-    echo "📦 Detected Node.js/JavaScript project"
+    echo "Detected Node.js/JavaScript project"
     if command -v npm >/dev/null 2>&1; then
         # Run tests if available
         if npm run test --silent 2>/dev/null; then
-            echo "✅ Tests passed"
+            echo "[OK] Tests passed"
         else
-            echo "⚠ Tests not available or failed"
+            echo "[WARN] Tests not available or failed"
         fi
         
         # Run linting if available
         if npm run lint --silent 2>/dev/null; then
-            echo "✅ Linting passed"
+            echo "[OK] Linting passed"
         elif command -v eslint >/dev/null 2>&1; then
             if eslint . --ext .js,.jsx,.ts,.tsx 2>/dev/null; then
-                echo "✅ ESLint passed"
+                echo "[OK] ESLint passed"
             else
                 echo "⚠ ESLint found issues"
             fi
@@ -336,54 +367,54 @@ if [ -f "package.json" ]; then
         
         # Run formatting check if available
         if npm run format:check --silent 2>/dev/null; then
-            echo "✅ Formatting check passed"
+            echo "[OK] Formatting check passed"
         elif command -v prettier >/dev/null 2>&1; then
             if prettier --check . 2>/dev/null; then
-                echo "✅ Prettier formatting check passed"
+                echo "[OK] Prettier formatting check passed"
             else
                 echo "⚠ Prettier found formatting issues"
             fi
         fi
     fi
 elif [ -f "Cargo.toml" ]; then
-    echo "🦀 Detected Rust project"
+    echo "Detected Rust project"
     if command -v cargo >/dev/null 2>&1; then
-        cargo check --quiet && echo "✅ Cargo check passed"
-        cargo clippy --quiet -- -D warnings 2>/dev/null && echo "✅ Clippy passed"
-        cargo fmt -- --check 2>/dev/null && echo "✅ Formatting check passed"
-        cargo test --quiet 2>/dev/null && echo "✅ Tests passed"
+        cargo check --quiet && echo "[OK] Cargo check passed"
+        cargo clippy --quiet -- -D warnings 2>/dev/null && echo "[OK] Clippy passed"
+        cargo fmt -- --check 2>/dev/null && echo "[OK] Formatting check passed"
+        cargo test --quiet 2>/dev/null && echo "[OK] Tests passed"
     fi
 elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
-    echo "🐍 Detected Python project"
+    echo "Detected Python project"
     if command -v python >/dev/null 2>&1; then
         # Run tests if pytest is available
         if command -v pytest >/dev/null 2>&1; then
-            pytest --quiet 2>/dev/null && echo "✅ Tests passed"
+            pytest --quiet 2>/dev/null && echo "[OK] Tests passed"
         fi
         
         # Run linting if available
         if command -v flake8 >/dev/null 2>&1; then
-            flake8 . 2>/dev/null && echo "✅ Flake8 passed"
+            flake8 . 2>/dev/null && echo "[OK] Flake8 passed"
         fi
         
         if command -v black >/dev/null 2>&1; then
-            black --check . 2>/dev/null && echo "✅ Black formatting check passed"
+            black --check . 2>/dev/null && echo "[OK] Black formatting check passed"
         fi
     fi
 elif [ -f "go.mod" ]; then
-    echo "🐹 Detected Go project"
+    echo "Detected Go project"
     if command -v go >/dev/null 2>&1; then
-        go vet ./... 2>/dev/null && echo "✅ Go vet passed"
-        go test ./... 2>/dev/null && echo "✅ Tests passed"
+        go vet ./... 2>/dev/null && echo "[OK] Go vet passed"
+        go test ./... 2>/dev/null && echo "[OK] Tests passed"
         if [ "$(gofmt -l . | wc -l)" -eq 0 ]; then
-            echo "✅ Formatting check passed"
+            echo "[OK] Formatting check passed"
         fi
     fi
 else
-    echo "📄 Generic project detected"
+    echo "Generic project detected"
 fi
 
-echo "✅ Quality checks complete"
+echo "[OK] Quality checks complete"
 exit 0
 EOF
 
@@ -435,6 +466,110 @@ else
     print_warning "Not a git repository - commit-msg hook will be installed when git init is run"
 fi
 
+# Create pre-commit hook to run quality checks
+if [ -d ".git" ]; then
+    cat > .git/hooks/pre-commit << 'EOF'
+#!/usr/bin/env bash
+# pre-commit - Run quality checks before allowing commits
+#
+# This hook runs the smart-lint.sh quality checker before each commit
+# to ensure all code meets professional standards.
+
+if [ -f ".claude/hooks/smart-lint.sh" ]; then
+    echo "Running pre-commit quality checks..."
+    bash .claude/hooks/smart-lint.sh
+    exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo ""
+        echo "[ERROR] Pre-commit quality checks failed!"
+        echo "Fix all issues above before committing."
+        echo "Run 'bash .claude/hooks/smart-lint.sh' to see details."
+        exit 1
+    fi
+    echo "[OK] Pre-commit quality checks passed!"
+else
+    echo "[WARN] Warning: .claude/hooks/smart-lint.sh not found"
+fi
+
+exit 0
+EOF
+    chmod +x .git/hooks/pre-commit
+    print_status "Git pre-commit hook installed (runs quality checks)"
+fi
+
+
+# Create web search validation hooks
+cat > .claude/hooks/validate-search-date.py << 'EOF'
+#!/usr/bin/env python3
+"""
+PreToolUse Hook: Validate search queries for current date context
+Ensures web searches include current year (2025) when appropriate
+"""
+import sys
+import json
+import re
+from datetime import datetime
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit(0)
+    
+    tool_input = json.loads(sys.argv[1])
+    query = tool_input.get('query', '')
+    
+    current_year = datetime.now().year
+    
+    # Check for outdated year references
+    old_years = ['2020', '2021', '2022', '2023', '2024']
+    for year in old_years:
+        if year in query and str(current_year) not in query:
+            print(f"[WARN] Warning: Search query contains {year} but not {current_year}")
+            print(f"Consider adding '{current_year}' for current results")
+            break
+    
+    # Suggest adding current year for time-sensitive topics
+    time_sensitive = ['latest', 'new', 'recent', 'current', 'update', 'release']
+    if any(word in query.lower() for word in time_sensitive):
+        if str(current_year) not in query:
+            print(f"[TIP] Tip: Add '{current_year}' to get the most current results")
+
+if __name__ == '__main__':
+    main()
+EOF
+
+cat > .claude/hooks/validate-search-results.py << 'EOF'
+#!/usr/bin/env python3
+"""
+PostToolUse Hook: Analyze search results for outdated information
+Warns about potentially stale search results
+"""
+import sys
+import json
+import re
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit(0)
+    
+    result = sys.argv[1]
+    
+    # Look for outdated year references in results
+    old_years = ['2020', '2021', '2022', '2023', '2024']
+    for year in old_years:
+        if year in result:
+            print(f"[NOTICE] Notice: Search results contain references to {year}")
+            print("Consider refining search with current year for latest information")
+            break
+
+if __name__ == '__main__':
+    main()
+EOF
+
+# Make Python hooks executable
+chmod +x .claude/hooks/validate-search-date.py
+chmod +x .claude/hooks/validate-search-results.py
+
+print_status "Claude tool hooks configured"
 print_status "Quality hooks configured"
 
 # Step 8: Enhanced project detection and customization
@@ -444,9 +579,13 @@ print_step "Detecting project type and customizing setup"
 run_framework_detection() {
     local lib_path=""
     
-    # Look for lib directory in various locations
+    # Look for lib directory in various locations (check relative paths)
     if [ -d "lib" ] && [ -f "lib/framework-detector.js" ]; then
         lib_path="lib"
+    elif [ -d "../lib" ] && [ -f "../lib/framework-detector.js" ]; then
+        lib_path="../lib"
+    elif [ -d "../../lib" ] && [ -f "../../lib/framework-detector.js" ]; then
+        lib_path="../../lib"
     elif [ -d "claude-code-template/lib" ] && [ -f "claude-code-template/lib/framework-detector.js" ]; then
         lib_path="claude-code-template/lib"
     fi
@@ -499,7 +638,7 @@ EOF
     fi
 }
 
-run_framework_detection
+print_status "Setup complete"
 
 # Step 9: Final configuration
 print_step "Finalizing setup and configuration"
@@ -525,19 +664,20 @@ print_status "Claude Code setup complete! (${setup_time}s)"
 
 # Setup summary
 echo ""
-echo -e "${BLUE}📋 Installation Summary:${NC}"
+echo -e "${BLUE}Installation Summary:${NC}"
 echo "  ✓ Installed 1 configuration file (CLAUDE.md)"
 echo "  ✓ Installed $total_commands command files"
-echo "  ✓ Configured 1 quality hook (smart-lint.sh)"
+echo "  ✓ Created .claude/settings.json (project + hook config)"
+echo "  ✓ Configured 3 quality hooks (smart-lint.sh + web search validation)"
 if [ -d ".git" ]; then
+    echo "  ✓ Installed git pre-commit hook (quality checks)"
     echo "  ✓ Installed git commit-msg hook (Claude attribution enforcement)"
 fi
 echo "  ✓ Created .claude directory structure"
-echo "  ✓ Enhanced project detection (when available)"
 echo "  ✓ Updated .gitignore"
 echo ""
 
-echo -e "${GREEN}🎯 Available Claude Code commands:${NC}"
+echo -e "${GREEN}Available Claude Code commands:${NC}"
 echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
 echo "  /debug    - Systematic debugging workflow"  
 echo "  /refactor - Code improvement workflow"
@@ -553,7 +693,7 @@ echo -e "${YELLOW}⚡ Quick Workflow:${NC}"
 echo "  /dev \"feature\" → /check → /ship \"description\""
 echo ""
 
-echo -e "${BLUE}🚀 Next Steps:${NC}"
+echo -e "${BLUE}Next Steps:${NC}"
 echo -e "  1. Start Claude Code with: ${GREEN}claude${NC}"
 echo -e "  2. Try your first TDD feature: ${GREEN}/dev \"user authentication\"${NC}"
 echo -e "  3. Get help anytime with: ${GREEN}/help${NC}"

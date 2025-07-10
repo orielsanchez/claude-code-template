@@ -61,10 +61,6 @@ feat: implement user authentication system
 - Implement login/logout endpoints  
 - Add middleware for route protection
 - Include comprehensive test coverage
-
-Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Integration with Development Workflow
