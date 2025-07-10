@@ -389,7 +389,7 @@ install_commands() {
 }
 
 if install_commands; then
-    print_status "Installed $total_files command and documentation files"
+    print_status "Installed $total_files commands and documentation files"
 else
     print_error "Failed to install command files"
     exit 1
@@ -828,7 +828,7 @@ print_status "Claude Code setup complete! (${setup_time}s)"
 echo ""
 echo -e "${BLUE}Installation Summary:${NC}"
 echo "  ✓ Installed 1 configuration file (CLAUDE.md)"
-echo "  ✓ Installed $total_files command and documentation files"
+echo "  ✓ Installed $total_files commands and documentation files"
 echo "  ✓ Created .claude/settings.json (project + hook config)"
 echo "  ✓ Created .claude/settings.local.json (local permissions)"
 echo "  ✓ Configured 3 quality hooks (smart-lint.sh + web search validation)"

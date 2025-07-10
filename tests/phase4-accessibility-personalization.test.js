@@ -78,7 +78,7 @@ describe('Phase 4: Accessibility & Personalization', () => {
       });
       
       expect(coloredText).not.toContain('\x1b['); // No ANSI color codes
-      expect(coloredText).toContain('✓ Success: Success message');
+      expect(coloredText).toContain('[OK] Success: Success message');
     });
 
     test('should validate WCAG AA contrast ratios for color schemes', () => {
@@ -123,9 +123,9 @@ describe('Phase 4: Accessibility & Personalization', () => {
       }
 
       expect(announcements).toEqual([
-        '⚙ Progress: Step 1 of 3 - Initializing',
-        '⚙ Progress: Step 2 of 3 - Processing', 
-        '✓ Success: Step 3 of 3 - Completed'
+        '[PROGRESS] Progress: Step 1 of 3 - Initializing',
+        '[PROGRESS] Progress: Step 2 of 3 - Processing', 
+        '[OK] Success: Step 3 of 3 - Completed'
       ]);
     });
 
@@ -566,16 +566,16 @@ describe('Phase 4: Accessibility & Personalization', () => {
         // Verify semantic prefixes
         switch (message.type) {
           case 'success':
-            expect(rendered.semantic).toContain('✓ Success:');
+            expect(rendered.semantic).toContain('[OK] Success:');
             break;
           case 'error':
-            expect(rendered.semantic).toContain('✗ Error:');
+            expect(rendered.semantic).toContain('[ERROR] Error:');
             break;
           case 'warning':
-            expect(rendered.semantic).toContain('⚠ Warning:');
+            expect(rendered.semantic).toContain('[WARN] Warning:');
             break;
           case 'info':
-            expect(rendered.semantic).toContain('ℹ Info:');
+            expect(rendered.semantic).toContain('[INFO] Info:');
             break;
         }
 

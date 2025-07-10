@@ -2,6 +2,16 @@
 
 **Professional development setup with Claude Code for systematic, high-quality software development.**
 
+## Summary
+
+A production-ready Claude Code template that transforms your development workflow with TDD-first methodology, automated quality checks, and professional standards. Get from zero to shipping features in under 5 minutes with 10 power commands, git hooks, and multi-language support.
+
+**Value Proposition:** Replace ad-hoc development with systematic workflows that prevent bugs, ensure quality, and accelerate delivery.
+
+**Next Step:** Run the one-line setup below, then start with `/dev "your first feature"` for immediate TDD development.
+
+**Recommended path:** Follow the Quick Start → `/dev` workflow → `/check` → `/ship` cycle for optimal results.
+
 ## Quick Start
 
 **Prerequisites:** Install Claude Code: `npm install -g @anthropic-ai/claude-code`
@@ -17,6 +27,8 @@ curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/mai
 claude                                # Start Claude Code
 /dev "implement user authentication"  # Your first TDD feature
 ```
+
+**Success indicators:** When working, you'll see `[OK]` messages and automatic test execution.
 
 ## What You Get
 
@@ -51,6 +63,26 @@ claude                                # Start Claude Code
 /check                 # Verify quality (all tests pass, no lint issues)
 /ship "description"    # Professional commit with clean history
 ```
+
+<details>
+<summary>### Advanced Workflows</summary>
+
+#### Systematic Debugging
+```bash
+/debug "issue description"  # Structured debugging process
+```
+
+#### Code Quality Improvement
+```bash
+/refactor "component name"  # Safe refactoring with tests
+```
+
+#### Strategic Planning
+```bash
+/plan "project goals"      # Generate development roadmap
+```
+
+</details>
 
 ## Configuration
 

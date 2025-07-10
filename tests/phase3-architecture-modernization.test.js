@@ -89,7 +89,7 @@ describe('Phase 3: Architecture Modernization', () => {
         
         const validConfig = {
           wcagStandards: { aaContrastRatio: 4.5 },
-          semanticPrefixes: { success: '✓ Success:' },
+          semanticPrefixes: { success: '[OK] Success:' },
           outputFormats: { screenReader: true }
         };
 
@@ -653,7 +653,7 @@ describe('Phase 3: Architecture Modernization', () => {
       });
 
       expect(testResult.format).toBe('structured');
-      expect(themeOutput.semantic).toContain('✓ Success:');
+      expect(themeOutput.semantic).toContain('[OK] Success:');
       expect(template.content).toContain('Quality Requirements');
     });
 
