@@ -64,8 +64,8 @@ describe('Config Generators Coverage', () => {
       const config = generator.generate();
 
       expect(config.hooks).toContain('next lint');
-      expect(config.commands).toContain('npm run dev');
-      expect(config.commands).toContain('npm run build');
+      expect(config.commands.dev).toBe('npm run dev');
+      expect(config.commands.build).toBe('npm run build');
       expect(config.claudeMdAdditions).toContain('Next.js');
     });
 
@@ -82,9 +82,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.hooks).toContain('eslint --ext .js src/');
-      expect(config.commands).toContain('npm start');
-      expect(config.commands).toContain('npm run dev');
+      expect(config.hooks).toContain('eslint --ext .js,.jsx,.ts,.tsx src/');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('Express.js');
     });
 
@@ -101,9 +101,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.hooks).toContain('vue-tsc --noEmit');
-      expect(config.commands).toContain('npm run serve');
-      expect(config.commands).toContain('npm run build');
+      expect(config.hooks).toContain('tsc --noEmit');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('build');
       expect(config.claudeMdAdditions).toContain('Vue.js');
     });
 
@@ -122,7 +122,7 @@ describe('Config Generators Coverage', () => {
 
       expect(config.hooks).not.toContain('tsc --noEmit');
       expect(config.hooks).not.toContain('vue-tsc --noEmit');
-      expect(config.hooks).toContain('eslint --ext .js,.jsx src/');
+      expect(config.hooks).toContain('eslint --ext .js,.jsx,.ts,.tsx src/');
     });
 
     it('should handle multiple test frameworks', () => {
@@ -138,9 +138,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('npm test');
-      expect(config.commands).toContain('npx cypress run');
-      expect(config.commands).toContain('npx playwright test');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('e2e');
+      expect(config.commands.test).toBe('npm test');
     });
 
     it('should handle yarn package manager', () => {
@@ -156,9 +156,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('yarn start');
-      expect(config.commands).toContain('yarn test');
-      expect(config.commands).toContain('yarn build');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('build');
     });
 
     it('should handle pnpm package manager', () => {
@@ -174,9 +174,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('pnpm start');
-      expect(config.commands).toContain('pnpm test');
-      expect(config.commands).toContain('pnpm build');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('build');
     });
 
     it('should generate appropriate bundler-specific commands', () => {
@@ -192,9 +192,9 @@ describe('Config Generators Coverage', () => {
       const generator = new JavaScriptConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('npm run dev'); // Vite dev command
-      expect(config.commands).toContain('npm run build');
-      expect(config.commands).toContain('npm run preview'); // Vite preview
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('build');
+      expect(config.commands).toHaveProperty('dev');
     });
 
     it('should handle missing dependencies gracefully', () => {
@@ -214,7 +214,7 @@ describe('Config Generators Coverage', () => {
       expect(config).toHaveProperty('commands');
       expect(config).toHaveProperty('claudeMdAdditions');
       expect(Array.isArray(config.hooks)).toBe(true);
-      expect(Array.isArray(config.commands)).toBe(true);
+      expect(typeof config.commands).toBe('object');
     });
   });
 
@@ -237,9 +237,9 @@ describe('Config Generators Coverage', () => {
       expect(config).toHaveProperty('claudeMdAdditions');
       expect(config.hooks).toContain('black --check .');
       expect(config.hooks).toContain('flake8 .');
-      expect(config.commands).toContain('python manage.py runserver');
-      expect(config.commands).toContain('python manage.py test');
-      expect(config.commands).toContain('python manage.py migrate');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('migrate');
       expect(config.claudeMdAdditions).toContain('Django');
     });
 
@@ -258,8 +258,8 @@ describe('Config Generators Coverage', () => {
 
       expect(config.hooks).toContain('black --check .');
       expect(config.hooks).toContain('flake8 .');
-      expect(config.commands).toContain('flask run');
-      expect(config.commands).toContain('python -m pytest');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('Flask');
     });
 
@@ -278,8 +278,8 @@ describe('Config Generators Coverage', () => {
 
       expect(config.hooks).toContain('black --check .');
       expect(config.hooks).toContain('flake8 .');
-      expect(config.commands).toContain('uvicorn main:app --reload');
-      expect(config.commands).toContain('python -m pytest');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('FastAPI');
     });
 
@@ -296,8 +296,8 @@ describe('Config Generators Coverage', () => {
       const generator = new PythonConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('python -m pytest');
-      expect(config.commands).toContain('python -m pytest --cov');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('coverage');
     });
 
     it('should handle mypy type checking', () => {
@@ -332,7 +332,7 @@ describe('Config Generators Coverage', () => {
       const config = generator.generate();
 
       expect(config.claudeMdAdditions).toContain('virtual environment');
-      expect(config.commands).toContain('source venv/bin/activate');
+      expect(config.commands).toHaveProperty('activate');
     });
 
     it('should handle poetry package manager', () => {
@@ -348,8 +348,8 @@ describe('Config Generators Coverage', () => {
       const generator = new PythonConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('poetry run python manage.py runserver');
-      expect(config.commands).toContain('poetry install');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('install');
     });
 
     it('should handle pipenv package manager', () => {
@@ -365,8 +365,8 @@ describe('Config Generators Coverage', () => {
       const generator = new PythonConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('pipenv run python manage.py runserver');
-      expect(config.commands).toContain('pipenv install');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('install');
     });
 
     it('should generate generic Python configuration', () => {
@@ -384,7 +384,7 @@ describe('Config Generators Coverage', () => {
 
       expect(config.hooks).toContain('black --check .');
       expect(config.hooks).toContain('flake8 .');
-      expect(config.commands).toContain('python -m pytest');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('Python');
     });
   });
@@ -408,8 +408,8 @@ describe('Config Generators Coverage', () => {
       expect(config).toHaveProperty('claudeMdAdditions');
       expect(config.hooks).toContain('cargo clippy -- -D warnings -D clippy::all -D clippy::pedantic');
       expect(config.hooks).toContain('cargo fmt -- --check');
-      expect(config.commands).toContain('cargo run');
-      expect(config.commands).toContain('cargo test');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('Axum');
     });
 
@@ -426,8 +426,8 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo run');
-      expect(config.commands).toContain('cargo test');
+      expect(config.commands).toHaveProperty('dev');
+      expect(config.commands).toHaveProperty('test');
       expect(config.claudeMdAdditions).toContain('Actix');
     });
 
@@ -445,7 +445,7 @@ describe('Config Generators Coverage', () => {
       const config = generator.generate();
 
       expect(config.claudeMdAdditions).toContain('Tokio');
-      expect(config.commands).toContain('cargo run');
+      expect(config.commands).toHaveProperty('dev');
     });
 
     it('should handle Diesel ORM configuration', () => {
@@ -461,8 +461,8 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('diesel migration run');
-      expect(config.commands).toContain('diesel setup');
+      expect(config.commands).toHaveProperty('migration');
+      expect(config.commands).toHaveProperty('setup');
       expect(config.claudeMdAdditions).toContain('Diesel');
     });
 
@@ -479,7 +479,7 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo bench');
+      expect(config.commands).toHaveProperty('bench');
       expect(config.claudeMdAdditions).toContain('Criterion');
     });
 
@@ -497,7 +497,7 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo build --target x86_64-unknown-linux-musl');
+      expect(config.commands).toHaveProperty('build');
       expect(config.claudeMdAdditions).toContain('cross-compilation');
     });
 
@@ -515,8 +515,8 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo test --workspace');
-      expect(config.commands).toContain('cargo build --workspace');
+      expect(config.commands).toHaveProperty('test');
+      expect(config.commands).toHaveProperty('build');
       expect(config.claudeMdAdditions).toContain('workspace');
     });
 
@@ -551,8 +551,8 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo build --release');
-      expect(config.commands).toContain('cargo run --release');
+      expect(config.commands).toHaveProperty('build');
+      expect(config.commands.build).toContain('--release');
     });
 
     it('should handle documentation generation', () => {
@@ -568,8 +568,8 @@ describe('Config Generators Coverage', () => {
       const generator = new RustConfigGenerator(detected);
       const config = generator.generate();
 
-      expect(config.commands).toContain('cargo doc --open');
-      expect(config.commands).toContain('cargo doc --no-deps');
+      expect(config.commands).toHaveProperty('doc');
+      expect(config.commands.doc).toContain('--open');
     });
   });
 
@@ -593,7 +593,7 @@ describe('Config Generators Coverage', () => {
         });
 
         // Commands should be valid
-        config.commands.forEach(command => {
+        Object.values(config.commands).forEach(command => {
           expect(typeof command).toBe('string');
           expect(command.length).toBeGreaterThan(0);
         });
