@@ -23,7 +23,7 @@ else
 fi
 
 # Setup configuration
-TOTAL_STEPS=8
+TOTAL_STEPS=9
 CURRENT_STEP=0
 START_TIME=$(date +%s)
 ESTIMATED_DURATION=30  # seconds
@@ -78,16 +78,31 @@ print_info() {
 
 # Signal handling for graceful interruption
 cleanup() {
+    local exit_code=${1:-130}  # Default to 130 (SIGINT)
     echo ""
     print_warning "Setup interrupted by user"
     print_info "Cleaning up partial installation..."
     
+    # Enhanced rollback capability
     # Remove partial files if they exist
     [ -f "CLAUDE.md.tmp" ] && rm -f "CLAUDE.md.tmp"
     [ -d ".claude.tmp" ] && rm -rf ".claude.tmp"
     
+    # Restore from backup if it exists
+    if [ -n "${BACKUP_DIR:-}" ] && [ -d "$BACKUP_DIR" ]; then
+        print_info "Restoring from backup..."
+        [ -f "$BACKUP_DIR/CLAUDE.md" ] && cp "$BACKUP_DIR/CLAUDE.md" "."
+        [ -d "$BACKUP_DIR/.claude" ] && cp -r "$BACKUP_DIR/.claude" "."
+        print_status "Restored from backup: $BACKUP_DIR"
+    fi
+    
+    # Remove failed installation artifacts
+    if [ -f ".claude/settings.json" ] && [ ! -s ".claude/settings.json" ]; then
+        rm -f ".claude/settings.json"
+    fi
+    
     print_info "Cleanup complete. You can safely re-run the setup script."
-    exit 0
+    exit $exit_code
 }
 
 # Trap signals for graceful handling
@@ -135,24 +150,50 @@ validate_environment() {
     print_status "Environment validation complete"
 }
 
-# Network retry logic
+# Enhanced network download with comprehensive error handling
 download_with_retry() {
     local url=$1
     local output=$2
     local max_attempts=3
     local attempt=1
     
+    # Validate inputs
+    if [ -z "$url" ] || [ -z "$output" ]; then
+        print_error "Invalid download parameters"
+        return 1
+    fi
+    
+    # Check disk space (require at least 1MB free)
+    if ! check_disk_space "$(dirname "$output")"; then
+        print_error "Insufficient disk space for download"
+        return 1
+    fi
+    
     while [ $attempt -le $max_attempts ]; do
-        if curl -sL --max-time 30 --connect-timeout 10 "$url" > "$output"; then
-            # Verify download was successful (file not empty)
-            if [ -s "$output" ]; then
+        # Enhanced curl with better error handling
+        local curl_output
+        curl_output=$(mktemp)
+        
+        if curl -sL --max-time 30 --connect-timeout 10 \
+                --fail --location --show-error \
+                --cacert-check \
+                --write-out "HTTPSTATUS:%{http_code}\nCONTENT_TYPE:%{content_type}" \
+                "$url" > "$output" 2>"$curl_output"; then
+            
+            # Validate download
+            if validate_download "$output" "$url"; then
+                rm -f "$curl_output"
                 return 0
             else
-                print_warning "Downloaded file is empty, retrying..."
+                print_warning "Download validation failed, retrying..."
             fi
         else
-            print_warning "Download failed (attempt $attempt/$max_attempts)"
+            local error_msg
+            error_msg=$(cat "$curl_output" 2>/dev/null || echo "Unknown error")
+            print_warning "Download failed (attempt $attempt/$max_attempts): $error_msg"
         fi
+        
+        rm -f "$curl_output"
         
         if [ $attempt -lt $max_attempts ]; then
             print_info "Retrying in 2 seconds..."
@@ -165,10 +206,77 @@ download_with_retry() {
     print_error "Failed to download after $max_attempts attempts: $url"
     print_info "Troubleshooting suggestions:"
     echo "  • Check your internet connection"
-    echo "  • Verify network proxy settings"
+    echo "  • Verify network proxy settings (HTTP_PROXY, HTTPS_PROXY)"
+    echo "  • Check firewall/corporate proxy restrictions"
+    echo "  • Verify SSL/TLS certificate configuration"
     echo "  • Try again later if the server is temporarily unavailable"
     echo "  • Download manually from: https://github.com/orielsanchez/claude-code-template"
     return 1
+}
+
+# Check available disk space
+check_disk_space() {
+    local dir=${1:-.}
+    local required_mb=1
+    
+    if command -v df >/dev/null 2>&1; then
+        local available_kb
+        available_kb=$(df "$dir" 2>/dev/null | awk 'NR==2 {print $4}')
+        local available_mb=$((available_kb / 1024))
+        
+        if [ "$available_mb" -lt "$required_mb" ]; then
+            print_error "Insufficient disk space: ${available_mb}MB available, ${required_mb}MB required"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+# Validate downloaded file
+validate_download() {
+    local file=$1
+    local url=$2
+    
+    # Check file exists and is not empty
+    if [ ! -f "$file" ] || [ ! -s "$file" ]; then
+        print_warning "Downloaded file is empty or missing"
+        return 1
+    fi
+    
+    # Validate content based on file type
+    case "$file" in
+        *.md)
+            # Markdown files should contain valid text
+            if ! file "$file" | grep -q "text"; then
+                print_warning "Downloaded .md file appears to be binary"
+                return 1
+            fi
+            ;;
+        *.json)
+            # JSON files should be valid JSON
+            if command -v python3 >/dev/null 2>&1; then
+                if ! python3 -m json.tool "$file" >/dev/null 2>&1; then
+                    print_warning "Downloaded .json file is not valid JSON"
+                    return 1
+                fi
+            fi
+            ;;
+        *.sh)
+            # Shell scripts should have proper syntax
+            if ! bash -n "$file" 2>/dev/null; then
+                print_warning "Downloaded .sh file has syntax errors"
+                return 1
+            fi
+            ;;
+    esac
+    
+    # Check for HTML error pages (common when download fails)
+    if grep -q "<html\|<HTML" "$file" 2>/dev/null; then
+        print_warning "Downloaded file appears to be an HTML error page"
+        return 1
+    fi
+    
+    return 0
 }
 
 # Header
@@ -217,12 +325,12 @@ if [ -f "CLAUDE.md" ] || [ -d ".claude" ]; then
         confirm="y"
     fi
     
-    # Create backup with timestamp
-    backup_name="claude-backup-$(date +%Y%m%d-%H%M%S)"
-    mkdir -p "$backup_name"
-    [ -f "CLAUDE.md" ] && cp "CLAUDE.md" "$backup_name/"
-    [ -d ".claude" ] && cp -r ".claude" "$backup_name/"
-    print_status "Created backup: $backup_name"
+    # Create backup with timestamp and track it globally for cleanup
+    BACKUP_DIR="claude-backup-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$BACKUP_DIR"
+    [ -f "CLAUDE.md" ] && cp "CLAUDE.md" "$BACKUP_DIR/"
+    [ -d ".claude" ] && cp -r ".claude" "$BACKUP_DIR/"
+    print_status "Created backup: $BACKUP_DIR"
 fi
 
 # Step 4: Create directory structure
@@ -244,19 +352,18 @@ else
 fi
 print_status "Installing configuration files complete"
 
-# Step 6: Install command files (hybrid approach)
-print_step "Installing command files"
+# Step 6: Install command files and documentation
+print_step "Installing command files and documentation"
 commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan" "explore")
-total_commands=${#commands[@]}
-current_command=0
+documentation=("README")
+total_files=$((${#commands[@]} + ${#documentation[@]}))
+current_file=0
 
-# Always download from GitHub for consistency and simplicity
-
-# Install commands from local source or download from GitHub
+# Install commands from GitHub
 install_commands() {
     for cmd in "${commands[@]}"; do
-        current_command=$((current_command + 1))
-        echo -n "  Installing ${cmd}.md... ($current_command/$total_commands) "
+        current_file=$((current_file + 1))
+        echo -n "  Installing ${cmd}.md... ($current_file/$total_files) "
         
         if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"; then
             echo "[OK] (download)"
@@ -265,11 +372,25 @@ install_commands() {
             return 1
         fi
     done
+    
+    # Install documentation files
+    for doc in "${documentation[@]}"; do
+        current_file=$((current_file + 1))
+        echo -n "  Installing ${doc}.md... ($current_file/$total_files) "
+        
+        if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/commands/${doc}.md" ".claude/commands/${doc}.md"; then
+            echo "[OK] (download)"
+        else
+            echo "[ERROR] (download failed)"
+            return 1
+        fi
+    done
+    
     return 0
 }
 
 if install_commands; then
-    print_status "Installed $total_commands command files"
+    print_status "Installed $total_files command and documentation files"
 else
     print_error "Failed to install command files"
     exit 1
@@ -569,8 +690,50 @@ EOF
 chmod +x .claude/hooks/validate-search-date.py
 chmod +x .claude/hooks/validate-search-results.py
 
+# Install hook documentation and examples
+echo -n "  Installing hooks documentation... "
+if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/hooks/README.md" ".claude/hooks/README.md"; then
+    echo "[OK]"
+else
+    echo "[WARN] (documentation download failed, continuing...)"
+fi
+
+echo -n "  Installing example hook config... "
+if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/hooks/example-claude-hooks-config.sh" ".claude/hooks/example-claude-hooks-config.sh"; then
+    echo "[OK]"
+    chmod +x .claude/hooks/example-claude-hooks-config.sh
+else
+    echo "[WARN] (example config download failed, continuing...)"
+fi
+
+echo -n "  Installing example ignore patterns... "
+if download_with_retry "https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/.claude/hooks/example-claude-hooks-ignore" ".claude/hooks/example-claude-hooks-ignore"; then
+    echo "[OK]"
+else
+    echo "[WARN] (example ignore patterns download failed, continuing...)"
+fi
+
+# Create settings.local.json with appropriate permissions
+cat > .claude/settings.local.json << 'EOF'
+{
+  "version": "1.0.0",
+  "permissions": {
+    "github_fetch": true,
+    "bash_ls": true,
+    "read_project_files": true
+  },
+  "local_overrides": {
+    "quality_hooks": {
+      "enabled": true,
+      "strict_mode": false
+    }
+  }
+}
+EOF
+
 print_status "Claude tool hooks configured"
 print_status "Quality hooks configured"
+print_status "Documentation and examples installed"
 
 # Step 8: Enhanced project detection and customization
 print_step "Detecting project type and customizing setup"
@@ -666,9 +829,11 @@ print_status "Claude Code setup complete! (${setup_time}s)"
 echo ""
 echo -e "${BLUE}Installation Summary:${NC}"
 echo "  ✓ Installed 1 configuration file (CLAUDE.md)"
-echo "  ✓ Installed $total_commands command files"
+echo "  ✓ Installed $total_files command and documentation files"
 echo "  ✓ Created .claude/settings.json (project + hook config)"
+echo "  ✓ Created .claude/settings.local.json (local permissions)"
 echo "  ✓ Configured 3 quality hooks (smart-lint.sh + web search validation)"
+echo "  ✓ Installed hook documentation and examples"
 if [ -d ".git" ]; then
     echo "  ✓ Installed git pre-commit hook (quality checks)"
     echo "  ✓ Installed git commit-msg hook (Claude attribution enforcement)"
