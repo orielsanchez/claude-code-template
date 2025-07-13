@@ -398,57 +398,19 @@ fi
 # Step 7: Download settings and create hooks
 print_step "Configuring settings and quality hooks"
 
-# Create simple settings.json
+# Create valid settings.json with only recognized fields
 cat > .claude/settings.json << 'EOF'
 {
-  "version": "1.0.0",
-  "project": {
-    "name": "claude-code-template",
-    "type": "template"
-  },
-  "features": {
-    "tdd": true,
-    "quality_hooks": true,
-    "professional_standards": true
-  },
-  "git_hooks": {
-    "pre_commit": true,
-    "commit_msg": true,
-    "smart_lint": true
-  },
-  "quality": {
-    "emoji_enforcement": true,
-    "claude_attribution_prevention": true,
-    "forbidden_patterns": true
-  },
-  "defaults": {
-    "workflow": "tdd-first",
-    "primary_command": "/dev",
-    "quality_gate": "/check"
-  },
+  "includeCoAuthoredBy": false,
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "WebSearch|WebFetch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python .claude/hooks/validate-search-date.py"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "WebSearch|WebFetch",
-        "hooks": [
-          {
-            "type": "command", 
-            "command": "python .claude/hooks/validate-search-results.py"
-          }
-        ]
-      }
-    ]
+    "PreToolUse": {
+      "WebSearch": "python .claude/hooks/validate-search-date.py",
+      "WebFetch": "python .claude/hooks/validate-search-date.py"
+    },
+    "PostToolUse": {
+      "WebSearch": "python .claude/hooks/validate-search-results.py",
+      "WebFetch": "python .claude/hooks/validate-search-results.py"
+    }
   }
 }
 EOF
@@ -712,24 +674,6 @@ else
     echo "[WARN] (example ignore patterns download failed, continuing...)"
 fi
 
-# Create settings.local.json with appropriate permissions
-cat > .claude/settings.local.json << 'EOF'
-{
-  "version": "1.0.0",
-  "permissions": {
-    "github_fetch": true,
-    "bash_ls": true,
-    "read_project_files": true
-  },
-  "local_overrides": {
-    "quality_hooks": {
-      "enabled": true,
-      "strict_mode": false
-    }
-  }
-}
-EOF
-
 print_status "Claude tool hooks configured"
 print_status "Quality hooks configured"
 print_status "Documentation and examples installed"
@@ -829,8 +773,7 @@ echo ""
 echo -e "${BLUE}Installation Summary:${NC}"
 echo "  ✓ Installed 1 configuration file (CLAUDE.md)"
 echo "  ✓ Installed $total_files commands and documentation files"
-echo "  ✓ Created .claude/settings.json (project + hook config)"
-echo "  ✓ Created .claude/settings.local.json (local permissions)"
+echo "  ✓ Created .claude/settings.json (hook configuration)"
 echo "  ✓ Configured 3 quality hooks (smart-lint.sh + web search validation)"
 echo "  ✓ Installed hook documentation and examples"
 if [ -d ".git" ]; then
