@@ -19,7 +19,7 @@ A production-ready Claude Code template that transforms your development workflo
 ### One-Line Setup
 
 ```bash
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
+curl -H 'Cache-Control: no-cache' -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
 ```
 
 **Then start coding:**
@@ -124,7 +124,7 @@ Agentic workflow:
 ### Existing Project
 ```bash
 # Preserves your existing CLAUDE.md
-curl -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
+curl -H 'Cache-Control: no-cache' -sL https://raw.githubusercontent.com/orielsanchez/claude-code-template/main/setup.sh | bash
 ```
 
 ## Key Features

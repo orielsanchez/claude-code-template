@@ -1,0 +1,27 @@
+{
+  "includeCoAuthoredBy": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validate-search-date.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validate-search-results.py"
+          }
+        ]
+      }
+    ]
+  }
+}

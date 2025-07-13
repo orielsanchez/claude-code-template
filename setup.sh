@@ -405,9 +405,7 @@ cat > .claude/settings.json << 'EOF'
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {
-          "tools": ["WebSearch", "WebFetch"]
-        },
+        "matcher": "WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",
@@ -418,9 +416,7 @@ cat > .claude/settings.json << 'EOF'
     ],
     "PostToolUse": [
       {
-        "matcher": {
-          "tools": ["WebSearch", "WebFetch"]
-        },
+        "matcher": "WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",
