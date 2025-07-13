@@ -403,14 +403,32 @@ cat > .claude/settings.json << 'EOF'
 {
   "includeCoAuthoredBy": false,
   "hooks": {
-    "PreToolUse": {
-      "WebSearch": "python .claude/hooks/validate-search-date.py",
-      "WebFetch": "python .claude/hooks/validate-search-date.py"
-    },
-    "PostToolUse": {
-      "WebSearch": "python .claude/hooks/validate-search-results.py",
-      "WebFetch": "python .claude/hooks/validate-search-results.py"
-    }
+    "PreToolUse": [
+      {
+        "matcher": {
+          "tools": ["WebSearch", "WebFetch"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validate-search-date.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tools": ["WebSearch", "WebFetch"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/validate-search-results.py"
+          }
+        ]
+      }
+    ]
   }
 }
 EOF
