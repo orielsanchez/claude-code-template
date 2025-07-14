@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/validate-search-date.py"
+            "command": "python3 .claude/hooks/validate-search-date.py"
           }
         ]
       }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/validate-search-results.py"
+            "command": "python3 .claude/hooks/validate-search-results.py"
           }
         ]
       }

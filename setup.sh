@@ -409,7 +409,7 @@ cat > .claude/settings.json << 'EOF'
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/validate-search-date.py"
+            "command": "python3 .claude/hooks/validate-search-date.py"
           }
         ]
       }
@@ -420,7 +420,7 @@ cat > .claude/settings.json << 'EOF'
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/validate-search-results.py"
+            "command": "python3 .claude/hooks/validate-search-results.py"
           }
         ]
       }
@@ -482,7 +482,7 @@ elif [ -f "Cargo.toml" ]; then
     fi
 elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
     echo "Detected Python project"
-    if command -v python >/dev/null 2>&1; then
+    if command -v python3 >/dev/null 2>&1; then
         # Run tests if pytest is available
         if command -v pytest >/dev/null 2>&1; then
             pytest --quiet 2>/dev/null && echo "[OK] Tests passed"
