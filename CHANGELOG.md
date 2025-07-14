@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Add TypeScript support to smart-lint.sh quality checks
+- Add proper exit codes to smart-lint.sh (exit 2 when issues found)
+- Add COMMANDS_REFERENCE.md for quick command lookup
+- Add helpful error messages with fix suggestions in quality checks
+
+### Improved
+- Improve smart-lint.sh with better issue tracking and reporting
+- Improve setup.sh to download hooks from repository
+- Improve progress bar ETA calculation (shows "Finalizing..." instead of negative time)
+- Improve error messages to show specific fix commands
+
 ### Removed
 - Remove broken `/explore` command that referenced deleted `CommandDiscovery` engine
 - Remove complex framework detection logic from setup.sh (60+ lines of unused code)

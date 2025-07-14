@@ -141,3 +141,5 @@ curl -H 'Cache-Control: no-cache' -sL https://raw.githubusercontent.com/orielsan
 - **Python 3** (for web search validation hooks)
 
 Ready to revolutionize your development process? **[Get started now](#quick-start)** ⚡
+
+**New:** Check out the [Commands Reference](COMMANDS_REFERENCE.md) for quick command lookup and workflows!
