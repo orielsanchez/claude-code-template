@@ -353,7 +353,7 @@ print_status "Installing configuration files complete"
 
 # Step 6: Install command files and documentation
 print_step "Installing command files and documentation"
-commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan" "explore")
+commands=("dev" "debug" "refactor" "check" "ship" "help" "prompt" "claude-md" "plan")
 documentation=("README")
 total_files=$((${#commands[@]} + ${#documentation[@]}))
 current_file=0
@@ -692,73 +692,23 @@ print_status "Claude tool hooks configured"
 print_status "Quality hooks configured"
 print_status "Documentation and examples installed"
 
-# Step 8: Enhanced project detection and customization
-print_step "Detecting project type and customizing setup"
+# Step 8: Basic project type detection
+print_step "Detecting project type for quality checks"
 
-# Try to use enhanced framework detection if available
-run_framework_detection() {
-    local lib_path=""
-    
-    # Look for lib directory in various locations (check relative paths)
-    if [ -d "lib" ] && [ -f "lib/framework-detector.js" ]; then
-        lib_path="lib"
-    elif [ -d "../lib" ] && [ -f "../lib/framework-detector.js" ]; then
-        lib_path="../lib"
-    elif [ -d "../../lib" ] && [ -f "../../lib/framework-detector.js" ]; then
-        lib_path="../../lib"
-    elif [ -d "claude-code-template/lib" ] && [ -f "claude-code-template/lib/framework-detector.js" ]; then
-        lib_path="claude-code-template/lib"
-    fi
-    
-    if [ -n "$lib_path" ] && command -v node >/dev/null 2>&1; then
-        print_status "Enhanced framework detection available - analyzing project..."
-        
-        # Create temporary detection script
-        cat > /tmp/framework-detect.js << EOF
-const path = require('path');
-const fs = require('fs');
+# Simple project type detection for smart-lint.sh
+if [ -f "package.json" ]; then
+    print_status "Detected: Node.js/JavaScript project"
+elif [ -f "Cargo.toml" ]; then
+    print_status "Detected: Rust project"
+elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+    print_status "Detected: Python project"
+elif [ -f "go.mod" ]; then
+    print_status "Detected: Go project"
+else
+    print_status "Detected: Generic project"
+fi
 
-// Add the lib directory to the path
-const libPath = path.resolve('$lib_path');
-const { detectFrameworks } = require(path.join(libPath, 'framework-detector'));
-
-async function detect() {
-    try {
-        const detected = await detectFrameworks(process.cwd());
-        console.log(JSON.stringify(detected, null, 2));
-    } catch (error) {
-        console.error('Detection failed:', error.message);
-        process.exit(1);
-    }
-}
-
-detect();
-EOF
-        
-        # Run detection and capture output
-        if detection_result=$(node /tmp/framework-detect.js 2>/dev/null); then
-            print_status "Project analysis complete"
-            echo "$detection_result" > .claude/project-detection.json
-            
-            # Extract primary language/framework for user info
-            if command -v node >/dev/null 2>&1; then
-                primary=$(echo "$detection_result" | node -pe "JSON.parse(require('fs').readFileSync(0)).primary || 'Unknown'")
-                if [ "$primary" != "Unknown" ]; then
-                    print_status "Detected: $primary project"
-                fi
-            fi
-        else
-            print_warning "Enhanced detection failed - using basic setup"
-        fi
-        
-        # Cleanup
-        rm -f /tmp/framework-detect.js
-    else
-        print_status "Using basic project setup (enhanced detection not available)"
-    fi
-}
-
-print_status "Setup complete"
+print_status "Project detection complete"
 
 # Step 9: Final configuration
 print_step "Finalizing setup and configuration"
@@ -803,7 +753,6 @@ echo "  /dev      - TDD-first development (PRIMARY COMMAND)"
 echo "  /debug    - Systematic debugging workflow"  
 echo "  /refactor - Code improvement workflow"
 echo "  /plan     - Strategic planning & roadmap generation"
-echo "  /explore  - Codebase exploration & analysis"
 echo "  /check    - Quality verification"
 echo "  /ship     - Complete and commit changes (NO Claude attribution)"
 echo "  /prompt   - Generate LLM handoff prompts"

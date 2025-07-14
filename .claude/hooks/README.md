@@ -186,13 +186,13 @@ export CLAUDE_HOOKS_TIMING=true
 ./.claude/hooks/smart-lint.sh
 ```
 
-## Integration with `lib/` Infrastructure
+## How It Works
 
-The hooks system integrates with:
-- **`lib/hook-utils.sh`**: Shared utilities and patterns
-- **`lib/linters/`**: Language-specific linting modules
-- **`lib/detectors/`**: Project type detection
-- **Framework detection**: Automatic tool configuration
+The hooks system provides:
+- **Project type detection**: Automatically identifies your project language
+- **Quality checks**: Runs appropriate linters and formatters
+- **Git integration**: Pre-commit and commit-msg hooks
+- **Web search validation**: Ensures current dates in searches
 
 This creates a comprehensive quality automation system that adapts to your project and enforces professional standards automatically.
 

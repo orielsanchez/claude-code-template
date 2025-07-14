@@ -4,7 +4,7 @@
 
 ## Summary
 
-A production-ready Claude Code template that transforms your development workflow with TDD-first methodology, automated quality checks, and professional standards. Get from zero to shipping features in under 5 minutes with 10 power commands, git hooks, and multi-language support.
+A production-ready Claude Code template that transforms your development workflow with TDD-first methodology, automated quality checks, and professional standards. Get from zero to shipping features in under 5 minutes with power commands, git hooks, and multi-language support.
 
 **Value Proposition:** Replace ad-hoc development with systematic workflows that prevent bugs, ensure quality, and accelerate delivery.
 
@@ -14,7 +14,7 @@ A production-ready Claude Code template that transforms your development workflo
 
 ## Quick Start
 
-**Prerequisites:** Install Claude Code: `npm install -g @anthropic-ai/claude-code`
+**Prerequisites:** Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
 
 ### One-Line Setup
 
@@ -32,14 +32,13 @@ claude                                # Start Claude Code
 
 ## What You Get
 
-### 🎯 **10 Power Commands**
+### 🎯 **9 Power Commands**
 - **`/dev`** - TDD-first development (primary command)
 - **`/debug`** - Systematic debugging workflow
 - **`/refactor`** - Code improvement with safety nets
 - **`/check`** - Quality verification (zero tolerance)
 - **`/ship`** - Professional commits
 - **`/plan`** - Strategic planning
-- **`/explore`** - Codebase discovery
 - **`/help`** - Interactive guidance
 - **`/prompt`** - Context handoff
 - **`/claude-md`** - Instruction maintenance
@@ -137,8 +136,8 @@ curl -H 'Cache-Control: no-cache' -sL https://raw.githubusercontent.com/orielsan
 
 ## Requirements
 
-- **Claude Code CLI** (`npm install -g @anthropic-ai/claude-code`)
+- **Claude Code CLI** - See [installation guide](https://docs.anthropic.com/en/docs/claude-code)
 - **Git repository** (for hooks and professional commits)
-- **Node.js** (for JavaScript projects)
+- **Python 3** (for web search validation hooks)
 
 Ready to revolutionize your development process? **[Get started now](#quick-start)** ⚡

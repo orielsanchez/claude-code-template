@@ -263,7 +263,7 @@ def parse_config(path: Path) -> Config:
 ```
 src/
 ├── index.ts      # Application entrypoint
-├── lib/          # Core modules
+├── modules/      # Core modules
 ├── types/        # Type definitions
 ├── utils/        # Utility functions
 └── config/       # Configuration
